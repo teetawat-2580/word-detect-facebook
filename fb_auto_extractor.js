@@ -5,14 +5,14 @@
  * 1. Open your Facebook Group in Microsoft Edge: https://www.facebook.com/groups/993813573590579
  * 2. Press F12 (or Ctrl+Shift+I) in Microsoft Edge -> Go to "Console" tab.
  * 3. Paste this script and press Enter.
- * 4. It will automatically scroll Microsoft Edge, extract real posts matching "รับคน", and open your Web App!
+ * 4. It will automatically scroll Microsoft Edge, extract real posts matching "รับคน", and open https://word-detect-facebook.vercel.app/ in a NEW TAB!
  */
 
 (async function autoExtractFBGroupEdge() {
   console.log("🚀 Starting Automatic Facebook Group Post Extractor (Microsoft Edge)...");
   
   const TARGET_KEYWORD = "รับคน";
-  const WEB_APP_URL = "http://localhost:8080";
+  const WEB_APP_URL = "https://word-detect-facebook.vercel.app/";
   const SCROLL_COUNT = 10;
   const SCROLL_DELAY = 1500;
 
@@ -65,6 +65,7 @@
     localStorage.setItem("AUTO_EXTRACTED_FB_POSTS", JSON.stringify(payload));
   } catch (e) {}
 
+  // Open Vercel web app in a new tab
   window.open(WEB_APP_URL, "_blank");
-  alert(`🎉 สกัดข้อมูลสำเร็จ! ดึงโพสต์จริงได้ ${extractedPosts.length} โพสต์จาก Microsoft Edge\n\nเปิดระบบค้นหาที่ ${WEB_APP_URL} เรียบร้อยแล้วครับ!`);
+  alert(`🎉 สกัดข้อมูลสำเร็จ! ดึงโพสต์จริงได้ ${extractedPosts.length} โพสต์จาก Microsoft Edge\n\nเปิดระบบค้นหาที่ ${WEB_APP_URL} ในแท็บใหม่เรียบร้อยแล้วครับ!`);
 })();

@@ -1,8 +1,9 @@
-/**
- * Automated Facebook Private Group Scraper & Extractor - Microsoft Edge Edition
- * Target: https://www.facebook.com/groups/993813573590579
- * Keyword: "รับคน"
- */
+"""
+Automated Facebook Private Group Scraper & Extractor - Microsoft Edge Edition
+Target: https://www.facebook.com/groups/993813573590579
+Keyword: "รับคน"
+Destination Web App: https://word-detect-facebook.vercel.app/
+"""
 
 import os
 import sys
@@ -26,6 +27,7 @@ def run_auto_collector():
     print("Group: ห้องตั้งตี้หารค่าสมองกล (Google AI)")
     print("Target URL: https://www.facebook.com/groups/993813573590579")
     print("Target Keyword: รับคน")
+    print("Target Web App: https://word-detect-facebook.vercel.app/")
     print("=" * 65)
 
     edge_exe = find_edge_path()
@@ -127,11 +129,14 @@ def run_auto_collector():
             }, f, ensure_ascii=False, indent=2)
 
         print(f"💾 บันทึกข้อมูลลงไฟล์: {output_file}")
-        print("\n🚀 กำลังเปิด Web App ค้นหาที่ http://localhost:8080 บน Microsoft Edge...")
         
-        # Navigate Edge tab to local web app
-        page.goto("http://localhost:8080", wait_until="domcontentloaded")
-        print("\n✨ เรียบร้อย! ระบบค้นหาโหลดข้อมูลโพสต์จริงเรียบร้อยแล้ว!")
+        target_web_app = "https://word-detect-facebook.vercel.app/"
+        print(f"\n🚀 กำลังเปิด Web App ค้นหาที่ {target_web_app} ในแท็บใหม่ของ Microsoft Edge...")
+        
+        # Open Vercel web app in a new tab in Microsoft Edge
+        new_tab = context.new_page()
+        new_tab.goto(target_web_app, wait_until="domcontentloaded")
+        print("\n✨ เรียบร้อย! ระบบเปิดหน้า https://word-detect-facebook.vercel.app/ ในแท็บใหม่แล้ว!")
         
         input("\nกด Enter เพื่อปิดโปรแกรม > ")
         context.close()
