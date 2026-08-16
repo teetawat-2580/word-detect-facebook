@@ -1,5 +1,5 @@
 /**
- * Automated Facebook Private Group Scraper & Extractor
+ * Automated Facebook Private Group Scraper & Extractor - Microsoft Edge Edition
  * Target: https://www.facebook.com/groups/993813573590579
  * Keyword: "รับคน"
  */
@@ -9,58 +9,81 @@ import sys
 import json
 import time
 
+def find_edge_path():
+    possible_paths = [
+        r"C:\Program Files (x86)\Microsoft\Edge\Application\msedge.exe",
+        r"C:\Program Files\Microsoft\Edge\Application\msedge.exe",
+        os.path.expanduser(r"~\AppData\Local\Microsoft\Edge\Application\msedge.exe")
+    ]
+    for path in possible_paths:
+        if os.path.exists(path):
+            return path
+    return None
+
 def run_auto_collector():
-    print("=" * 60)
-    print("🤖 AUTOMATED FACEBOOK PRIVATE GROUP COLLECTOR")
+    print("=" * 65)
+    print("🤖 AUTOMATED FACEBOOK PRIVATE GROUP COLLECTOR (MICROSOFT EDGE EDITION)")
     print("Group: ห้องตั้งตี้หารค่าสมองกล (Google AI)")
     print("Target URL: https://www.facebook.com/groups/993813573590579")
     print("Target Keyword: รับคน")
-    print("=" * 60)
+    print("=" * 65)
+
+    edge_exe = find_edge_path()
+    if edge_exe:
+        print(f"✅ Microsoft Edge Found: {edge_exe}")
+    else:
+        print("⚠️ Standard Edge path not found, using Playwright msedge channel...")
 
     try:
         from playwright.sync_api import sync_playwright
     except ImportError:
-        print("Installing required dependencies...")
+        print("Installing required Playwright dependencies...")
         os.system("pip install playwright")
-        os.system("playwright install chromium")
         from playwright.sync_api import sync_playwright
 
-    # Store user browser session data so login is saved
-    user_data_dir = os.path.join(os.path.expanduser("~"), ".fb_word_detect_chrome_session")
+    # Dedicated session storage for Edge login
+    user_data_dir = os.path.join(os.path.expanduser("~"), ".fb_word_detect_edge_session")
     os.makedirs(user_data_dir, exist_ok=True)
 
     with sync_playwright() as p:
-        print("\n🌐 Launching Chrome Browser...")
-        context = p.chromium.launch_persistent_context(
-            user_data_dir=user_data_dir,
-            headless=False,
-            viewport={'width': 1280, 'height': 800},
-            args=["--disable-notifications", "--start-maximized"]
-        )
-
-        page = context.pages[0] if context.pages else context.new_page()
+        print("\n🌐 Launching Microsoft Edge Browser...")
         
+        launch_kwargs = {
+            "user_data_dir": user_data_dir,
+            "headless": False,
+            "viewport": {'width': 1280, 'height': 800},
+            "args": ["--disable-notifications", "--start-maximized"]
+        }
+
+        if edge_exe:
+            launch_kwargs["executable_path"] = edge_exe
+        else:
+            launch_kwargs["channel"] = "msedge"
+
+        context = p.chromium.launch_persistent_context(**launch_kwargs)
+        page = context.pages[0] if context.pages else context.new_page()
+
         target_url = "https://www.facebook.com/groups/993813573590579"
-        print(f"🔗 Navigating to {target_url}...")
+        print(f"🔗 Opening {target_url} in Microsoft Edge...")
         page.goto(target_url, wait_until="domcontentloaded")
 
         time.sleep(3)
 
-        # Check if login is needed
+        # Check if user needs to log into Facebook in Edge
         if "login" in page.url.lower():
-            print("\n⚠️ Please log into Facebook in the opened browser window...")
-            print("Press ENTER here in terminal after logging into Facebook!")
-            input("Waiting for user to log in... Press Enter when ready > ")
+            print("\n⚠️ กรุณาล็อกอินเข้า Facebook ในหน้าต่าง Microsoft Edge ที่เปิดขึ้นมา...")
+            print("เมื่อล็อกอินเรียบร้อยแล้ว ให้กด ENTER ในหน้าต่างนี้เพื่อดึงโพสต์อัตโนมัติ!")
+            input("กด Enter ที่นี่เพื่อเริ่มดึงข้อมูล > ")
             page.goto(target_url, wait_until="domcontentloaded")
             time.sleep(3)
 
-        print("\n⏳ Auto-scrolling group feed to collect live posts...")
+        print("\n⏳ กำลังเลื่อนหน้าฟีดกลุ่มเพื่อดึงโพสต์จริงแบบอัตโนมัติ...")
         for i in range(1, 8):
-            print(f"   Scroll page ({i}/7)...")
+            print(f"   เลื่อนหน้าจอ Edge ({i}/7)...")
             page.evaluate("window.scrollTo(0, document.body.scrollHeight)")
             time.sleep(2)
 
-        print("\n🔍 Extracting post contents...")
+        print("\n🔍 กำลังสกัดข้อความโพสต์จากกลุ่ม...")
         posts_data = page.evaluate("""() => {
             const TARGET_KEYWORD = "รับคน";
             const postElements = document.querySelectorAll('[role="feed"] > div, [data-pagelet^="FeedUnit"], div[dir="auto"]');
@@ -77,7 +100,7 @@ def run_auto_collector():
                     const authorName = authorEl ? authorEl.textContent.trim() : 'สมาชิกกลุ่มตั้งตี้หารค่าสมองกล';
 
                     results.push({
-                        id: 'real_auto_' + Date.now() + '_' + index,
+                        id: 'edge_real_' + Date.now() + '_' + index,
                         authorName: authorName,
                         content: content,
                         postDate: new Date().toISOString(),
@@ -90,9 +113,9 @@ def run_auto_collector():
             return results;
         }""")
 
-        print(f"\n🎉 Successfully extracted {len(posts_data)} REAL posts from private group!")
+        print(f"\n🎉 ดึงโพสต์จริงสำเร็จทั้งหมด {len(posts_data)} โพสต์จากกลุ่ม!")
 
-        # Save to real_posts.json
+        # Save output to real_posts.json
         output_file = os.path.join(os.path.dirname(os.path.abspath(__file__)), "real_posts.json")
         with open(output_file, "w", encoding="utf-8") as f:
             json.dump({
@@ -103,10 +126,14 @@ def run_auto_collector():
                 "posts": posts_data
             }, f, ensure_ascii=False, indent=2)
 
-        print(f"💾 Saved real group data to: {output_file}")
-        print("\n🚀 Opening Web App on http://localhost:8080...")
-
-        # Also launch local web app
+        print(f"💾 บันทึกข้อมูลลงไฟล์: {output_file}")
+        print("\n🚀 กำลังเปิด Web App ค้นหาที่ http://localhost:8080 บน Microsoft Edge...")
+        
+        # Navigate Edge tab to local web app
+        page.goto("http://localhost:8080", wait_until="domcontentloaded")
+        print("\n✨ เรียบร้อย! ระบบค้นหาโหลดข้อมูลโพสต์จริงเรียบร้อยแล้ว!")
+        
+        input("\nกด Enter เพื่อปิดโปรแกรม > ")
         context.close()
 
 if __name__ == "__main__":
