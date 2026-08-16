@@ -1,6 +1,7 @@
 /**
  * Facebook Private Group Word Search - Core Application Engine
- * Configured specifically for Group: 993813573590579 & Keyword: "รับคน"
+ * Target Group: "ห้องตั้งตี้หารค่าสมองกล (Google AI)" (Group ID: 993813573590579)
+ * Target Keyword: "รับคน"
  */
 
 (function () {
@@ -73,7 +74,7 @@
 
     // Load sample data if available
     if (window.SAMPLE_FB_GROUP_DATA && window.SAMPLE_FB_GROUP_DATA.posts) {
-      loadDataset(window.SAMPLE_FB_GROUP_DATA.posts, "Group 993813573590579 Dataset");
+      loadDataset(window.SAMPLE_FB_GROUP_DATA.posts, "ห้องตั้งตี้หารค่าสมองกล (Google AI)");
     }
   }
 
@@ -202,9 +203,9 @@
     if (DOM.loadSampleDataBtn) {
       DOM.loadSampleDataBtn.addEventListener('click', () => {
         if (window.SAMPLE_FB_GROUP_DATA) {
-          loadDataset(window.SAMPLE_FB_GROUP_DATA.posts, "Group 993813573590579 Dataset");
+          loadDataset(window.SAMPLE_FB_GROUP_DATA.posts, "ห้องตั้งตี้หารค่าสมองกล (Google AI)");
           closeModal(DOM.importModal);
-          showToast("โหลดข้อมูลกลุ่ม 993813573590579 เรียบร้อยแล้ว!", "success");
+          showToast("โหลดข้อมูลกลุ่ม 'ห้องตั้งตี้หารค่าสมองกล (Google AI)' เรียบร้อยแล้ว!", "success");
         }
       });
     }
@@ -219,7 +220,7 @@
   function loadDataset(postsArray, sourceName = "Imported File") {
     state.posts = postsArray.map((p, index) => ({
       id: p.id || `post_${Date.now()}_${index}`,
-      authorName: p.authorName || p.author || 'สมาชิกกลุ่ม 993813573590579',
+      authorName: p.authorName || p.author || 'สมาชิกกลุ่มตั้งตี้หารค่าสมองกล',
       authorAvatar: p.authorAvatar || getAvatarPlaceholder(p.authorName || 'User'),
       postDate: p.postDate || p.date || new Date().toISOString(),
       postUrl: p.postUrl || 'https://www.facebook.com/groups/993813573590579',
@@ -295,7 +296,7 @@
             if (txt.length > 25 && !txt.includes('Comment') && !txt.includes('Like')) {
               extractedPosts.push({
                 id: `html_p_${idCounter++}`,
-                authorName: 'สมาชิกกลุ่ม 993813573590579',
+                authorName: 'สมาชิกกลุ่มตั้งตี้หารค่าสมองกล',
                 content: txt,
                 postDate: new Date().toISOString(),
                 postUrl: 'https://www.facebook.com/groups/993813573590579',
@@ -309,7 +310,7 @@
             const textEl = container.querySelector('[dir="auto"]') || container;
             const content = textEl ? textEl.textContent.trim() : '';
             const authorEl = container.querySelector('h2, h3, strong, a[href*="/user/"], a[href*="/groups/"]');
-            const authorName = authorEl ? authorEl.textContent.trim() : 'สมาชิกกลุ่ม 993813573590579';
+            const authorName = authorEl ? authorEl.textContent.trim() : 'สมาชิกกลุ่มตั้งตี้หารค่าสมองกล';
 
             if (content.length > 15) {
               extractedPosts.push({
@@ -361,7 +362,7 @@
 
           return {
             id: `excel_${idx}`,
-            authorName: authorKey ? String(row[authorKey]) : 'สมาชิกกลุ่ม 993813573590579',
+            authorName: authorKey ? String(row[authorKey]) : 'สมาชิกกลุ่มตั้งตี้หารค่าสมองกล',
             content: contentKey ? String(row[contentKey]) : '',
             postDate: dateKey ? String(row[dateKey]) : new Date().toISOString(),
             postUrl: urlKey ? String(row[urlKey]) : 'https://www.facebook.com/groups/993813573590579',
@@ -537,7 +538,7 @@
         <div class="empty-state">
           <div class="empty-icon">🔍</div>
           <h3 class="empty-title">ไม่พบโพสต์ที่ตรงกับคำค้นหา "${escapeHtml(state.searchQuery)}"</h3>
-          <p class="empty-desc">ลองเปลี่ยนคำค้นหา หรือกดล้างตัวกรองทั้งหมดเพื่อแสดงโพสต์ทั้งหมดในกลุ่ม 993813573590579</p>
+          <p class="empty-desc">ลองเปลี่ยนคำค้นหา หรือกดล้างตัวกรองทั้งหมดเพื่อแสดงโพสต์ทั้งหมดในกลุ่มห้องตั้งตี้หารค่าสมองกล (Google AI)</p>
           <button class="btn btn-secondary" onclick="document.getElementById('reset-filters-btn').click()">ล้างตัวกรองทั้งหมด</button>
         </div>
       `;
@@ -584,7 +585,7 @@
               <img class="author-avatar" src="${escapeHtml(post.authorAvatar)}" alt="${escapeHtml(post.authorName)}" onerror="this.src='https://ui-avatars.com/api/?name=${encodeURIComponent(post.authorName)}&background=1877F2&color=fff'">
               <div>
                 <div class="author-name">${escapeHtml(post.authorName)}</div>
-                <div class="post-timestamp">📅 ${formattedDate} • Group 993813573590579</div>
+                <div class="post-timestamp">📅 ${formattedDate} • ห้องตั้งตี้หารค่าสมองกล (Google AI)</div>
               </div>
             </div>
             <a href="${escapeHtml(post.postUrl)}" target="_blank" class="post-badge" style="text-decoration: none;">
@@ -723,7 +724,8 @@
     }
 
     const rows = state.filteredPosts.map(p => ({
-      "กลุ่ม (Group)": "https://www.facebook.com/groups/993813573590579",
+      "กลุ่ม (Group)": "ห้องตั้งตี้หารค่าสมองกล (Google AI)",
+      "URL กลุ่ม": "https://www.facebook.com/groups/993813573590579",
       "ผู้โพสต์ (Author)": p.authorName,
       "วันที่ (Date)": p.postDate,
       "ข้อความโพสต์ (Content)": p.content,
@@ -733,9 +735,9 @@
 
     const worksheet = XLSX.utils.json_to_sheet(rows);
     const workbook = XLSX.utils.book_new();
-    XLSX.utils.book_append_sheet(workbook, worksheet, "FB_Group_Search");
+    XLSX.utils.book_append_sheet(workbook, worksheet, "AI_Group_Search");
 
-    XLSX.writeFile(workbook, `FB_Group_993813573590579_Search_รับคน.xlsx`);
+    XLSX.writeFile(workbook, `FB_Group_ห้องตั้งตี้หารค่าสมองกล_Search_รับคน.xlsx`);
     showToast(`ส่งออก ${rows.length} แถวไปยังไฟล์ Excel สำเร็จ!`, "success");
   }
 

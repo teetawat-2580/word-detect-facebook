@@ -1,6 +1,6 @@
-# 🔍 Facebook Private Group Word Search & Detector Web App
+# 🤖 🔍 FB Group Word Detector - "ห้องตั้งตี้หารค่าสมองกล (Google AI)"
 
-A modern, high-performance web application designed to search, filter, and detect specific words, sentences, or regular expressions across Facebook Private Group posts and comments with instant visual keyword highlighting.
+เว็บแอปพลิเคชันค้นหาและตรวจจับคำเฉพาะ **"รับคน"** (หรือประโยค/คีย์เวิร์ดอื่นๆ) ในกลุ่มส่วนตัว Facebook **"ห้องตั้งตี้หารค่าสมองกล (Google AI)"** (Group ID: `993813573590579`) พร้อมระบบเน้นข้อความเรืองแสง (Glowing Highlight) และการส่งออกข้อมูลเป็นไฟล์ Excel
 
 ![License](https://img.shields.io/badge/license-MIT-blue.svg)
 ![HTML5](https://img.shields.io/badge/HTML5-E34F26?style=flat&logo=html5&logoColor=white)
@@ -9,75 +9,43 @@ A modern, high-performance web application designed to search, filter, and detec
 
 ---
 
-## 🌟 Features
+## 🎯 ข้อมูลกลุ่มและคำค้นหาเป้าหมาย
 
-- **Multi-Format Ingestion**:
-  - **Saved Facebook HTML Pages**: Save any Facebook Private Group feed page using `Ctrl + S` in Google Chrome or Edge and drop the `.html` file into the app.
-  - **Excel & CSV Import**: Read `.xlsx`, `.xls`, or `.csv` files containing exported post text, authors, timestamps, and comments.
-  - **Copy-Paste Raw Text**: Import raw text directly into the text editor.
-  - **Sample Dataset**: Built-in sample Facebook group data for instant demonstration.
-
-- **Deep Search & Regex Engine**:
-  - **Exact Phrase Matching**: Search for exact sentences (e.g. `"looking for recommendation"`).
-  - **Keyword Search**: Match any or all specified keywords.
-  - **Regular Expression (Regex)**: Supports custom regex patterns (e.g. `\b(price|cost|buy)\b`).
-  - **Visual Highlighting**: High-contrast glowing amber/yellow highlights around matching terms in posts and comments.
-
-- **Filters & Analytics**:
-  - Real-time statistics counters (Total Posts, Matched Results, Unique Authors, Matched Comments).
-  - Author filter dropdown.
-  - Date Range pickers (Start Date / End Date).
-  - Toggles for *Case Sensitivity*, *Whole Word Match*, *Posts with Comments*, and *Contains Links*.
-
-- **Export Engine**:
-  - Export filtered search results into clean Excel (`.xlsx`) files with one click.
+- **ชื่อกลุ่ม Facebook**: **ห้องตั้งตี้หารค่าสมองกล (Google AI)**
+- **URL กลุ่ม**: [https://www.facebook.com/groups/993813573590579](https://www.facebook.com/groups/993813573590579)
+- **คีย์เวิร์ดเริ่มต้น**: **`รับคน`** (เช่น *รับคนหาร Gemini Advanced*, *รับคนเข้าตี้ Google AI*, *รับคนหาร Claude 3.5 Sonnet*)
 
 ---
 
-## 🚀 Quick Start
+## 🌟 ฟีเจอร์หลัก (Features)
 
-1. **Clone the Repository**:
+- **นำเข้าข้อมูลได้หลายรูปแบบ (Multi-Format Ingestion)**:
+  - **ไฟล์ HTML**: กด <kbd>Ctrl + S</kbd> บันทึกหน้ากลุ่มจาก Google Chrome แล้วลากวางใส่แอปเพื่อแกะโพสต์และคอมเมนต์อัตโนมัติ
+  - **ไฟล์ Excel & CSV**: รองรับ `.xlsx`, `.xls`, `.csv`
+  - **วางข้อความโพสต์ (Copy-Paste)**: วางข้อความที่คัดลอกมาเพื่อค้นหาได้ทันที
+  - **ชุดข้อมูลตัวอย่าง**: มาพร้อมข้อมูลโพสต์ตัวอย่างเกี่ยวกับการหารค่าบริการ AI / Google AI ในกลุ่ม 993813573590579
+
+- **ระบบค้นหาและไฮไลท์ข้อความ (Search & Highlight Engine)**:
+  - ค้นหาคำว่า **"รับคน"** หรือวลีอื่นๆ แบบตรงตัว (Exact Phrase), หลายคีย์เวิร์ด (Any Keyword), หรือ Regex
+  - ไฮไลท์สีเหลืองเรืองแสงที่คำค้นหา ทั้งในเนื้อหาโพสต์และในความคิดเห็น (Comments)
+
+- **ส่งออกไฟล์ Excel (.xlsx)**:
+  - กดส่งออกผลการค้นหาเป็นไฟล์ Excel ภาษาไทยพร้อมลิงก์โพสต์ตรงไปยัง Facebook Group 993813573590579 ได้ในคลิกเดียว
+
+---
+
+## 🚀 วิธีใช้งาน (Quick Start)
+
+1. **ดาวน์โหลด Repository**:
    ```bash
    git clone https://github.com/teetawat-2580/word-detect-facebook.git
    cd word-detect-facebook
    ```
 
-2. **Run Locally**:
-   You can serve the web app using any simple HTTP server. For Python:
+2. **เปิดใช้งานบนเครื่อง**:
    ```bash
    python -m http.server 8080
    ```
 
-3. **Open in Browser**:
-   Navigate to [http://localhost:8080](http://localhost:8080).
-
----
-
-## 💡 How to Import Facebook Private Group Data
-
-Since Facebook restricts direct API scraping of private group feeds, this app uses client-side ingestion:
-
-1. Open your **Facebook Private Group** in Google Chrome or Edge.
-2. Scroll down to load the posts you want to index.
-3. Press <kbd>Ctrl</kbd> + <kbd>S</kbd> (or <kbd>Cmd</kbd> + <kbd>S</kbd> on Mac) to save the page as **Webpage, Complete** or **Webpage, HTML Only**.
-4. Open the Web App, click **Import Data**, and drop your saved `.html` file into the upload zone!
-
----
-
-## 🛠️ Project Structure
-
-```
-word-detect-facebook/
-├── index.html       # Main single-page interface layout
-├── styles.css       # Dark mode glassmorphism UI & highlight styles
-├── app.js           # Search engine, parsers, filters & export logic
-├── sample_data.js   # Pre-packaged sample group dataset
-├── .gitignore       # Git ignore config
-└── README.md        # Documentation
-```
-
----
-
-## 📜 License
-
-Distributed under the MIT License. See `LICENSE` for more information.
+3. **เข้าใช้งานทางเบราว์เซอร์**:
+   เปิดลิงก์ [http://localhost:8080](http://localhost:8080)
