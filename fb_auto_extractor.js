@@ -1,6 +1,6 @@
 /**
  * Facebook Private Group (993813573590579) Auto-Extractor Script - Microsoft Edge Edition
- * Extracts post content, author name, AND author Facebook profile URL link.
+ * Extracts REAL post contents, REAL post permalinks, AND REAL author account profile links.
  */
 
 (async function autoExtractFBGroupEdge() {
@@ -18,45 +18,89 @@
     await sleep(SCROLL_DELAY);
   }
 
-  const postElements = document.querySelectorAll('[role="feed"] > div, [data-pagelet^="FeedUnit"], div[dir="auto"]');
+  // Select all post units in Facebook group feed
+  const postElements = document.querySelectorAll('[role="feed"] > div, [data-pagelet^="FeedUnit"], .userContentWrapper, div[role="article"]');
   const extractedPosts = [];
   const seenContent = new Set();
 
   postElements.forEach((el, index) => {
+    // 1. Extract Post Content Text
     const textEl = el.querySelector('[dir="auto"]') || el;
     const content = textEl ? textEl.textContent.trim() : '';
-    
+
     if (content.length > 15 && !seenContent.has(content)) {
       seenContent.add(content);
 
-      // Extract author name and profile link URL
-      const authorEl = el.querySelector('h2 a, h3 a, strong a, a[href*="/user/"], a[href*="profile.php"], a[href*="/groups/"]');
-      const authorName = authorEl ? authorEl.textContent.trim() : 'สมาชิกกลุ่มตั้งตี้หารค่าสมองกล';
-      
-      let authorUrl = authorEl ? authorEl.getAttribute('href') || '' : '';
-      if (authorUrl && authorUrl.startsWith('/')) {
-        authorUrl = 'https://www.facebook.com' + authorUrl;
+      // 2. Extract REAL Author Name and REAL Author Facebook Profile URL
+      let realAuthorName = 'สมาชิกกลุ่มตั้งตี้หารค่าสมองกล';
+      let realAuthorUrl = '';
+
+      // Search post header links (h2, h3, h4, strong, author links)
+      const headerAnchors = Array.from(el.querySelectorAll('h2 a, h3 a, h4 a, strong a, a[href*="profile.php"], a[href*="/user/"], a[href*="/people/"], a[href*="/groups/993813573590579/user/"]'));
+
+      for (const anchor of headerAnchors) {
+        const href = anchor.getAttribute('href') || '';
+        const txt = anchor.textContent.trim();
+
+        if (txt && !txt.includes('Comment') && !txt.includes('Share') && !txt.includes('Like') && !txt.includes('ห้องตั้งตี้')) {
+          realAuthorName = txt;
+          if (href && href !== '#' && !href.startsWith('javascript:')) {
+            let fullUrl = href.startsWith('/') ? 'https://www.facebook.com' + href : href;
+            // Clean up tracking params if needed, but preserve profile ID / username
+            realAuthorUrl = fullUrl;
+            break;
+          }
+        }
       }
-      if (!authorUrl || authorUrl === 'https://www.facebook.com#') {
-        authorUrl = 'https://www.facebook.com/groups/993813573590579';
+
+      if (!realAuthorUrl) {
+        const fallbackAuthorLink = el.querySelector('a[href*="profile.php"], a[href*="/user/"], a[href*="/people/"]');
+        if (fallbackAuthorLink) {
+          let href = fallbackAuthorLink.getAttribute('href') || '';
+          realAuthorUrl = href.startsWith('/') ? 'https://www.facebook.com' + href : href;
+        }
+      }
+
+      // 3. Extract REAL Post Permalink / URL Link
+      let realPostUrl = '';
+      const permalinkAnchor = el.querySelector('a[href*="/posts/"], a[href*="/permalink/"], a[href*="pfbid"], a[href*="multi_permalinks="], a[href*="story_fbid="]');
+
+      if (permalinkAnchor) {
+        let href = permalinkAnchor.getAttribute('href') || '';
+        realPostUrl = href.startsWith('/') ? 'https://www.facebook.com' + href : href;
+      } else {
+        // Fallback: search all anchors in post header for timestamp links
+        const allLinks = Array.from(el.querySelectorAll('a[role="link"], a[aria-label]'));
+        for (const link of allLinks) {
+          const href = link.getAttribute('href') || '';
+          if (href.includes('/posts/') || href.includes('/permalink/') || href.includes('pfbid') || href.includes('story_fbid=')) {
+            realPostUrl = href.startsWith('/') ? 'https://www.facebook.com' + href : href;
+            break;
+          }
+        }
+      }
+
+      // If no specific post permalink found, fallback to group URL
+      if (!realPostUrl) {
+        realPostUrl = window.location.href;
       }
 
       const isMatched = content.includes(TARGET_KEYWORD);
 
       extractedPosts.push({
-        id: `edge_auto_${Date.now()}_${index}`,
-        authorName: authorName,
-        authorUrl: authorUrl,
+        id: `real_edge_${Date.now()}_${index}`,
+        authorName: realAuthorName,
+        authorUrl: realAuthorUrl || 'https://www.facebook.com/groups/993813573590579',
         content: content,
         postDate: new Date().toISOString(),
-        postUrl: window.location.href,
+        postUrl: realPostUrl,
         isSamplePost: false,
         isMatched: isMatched
       });
     }
   });
 
-  console.log(`✅ ดึงโพสต์จริงสำเร็จ ${extractedPosts.length} โพสต์ พร้อมลิงก์โปรไฟล์ผู้โพสต์!`);
+  console.log(`✅ ดึงโพสต์จริงสำเร็จ ${extractedPosts.length} โพสต์ พร้อมลิงก์โพสต์จริงและลิงก์โปรไฟล์ผู้โพสต์จริง!`);
 
   const payload = {
     groupName: "ห้องตั้งตี้หารค่าสมองกล (Google AI)",
@@ -80,5 +124,5 @@
   // Open Vercel Web App in a new tab with encoded hash data
   window.open(targetUrl, "_blank");
 
-  alert(`🎉 สกัดข้อมูลสำเร็จ! ดึงโพสต์จริงได้ ${extractedPosts.length} โพสต์ พร้อมลิงก์โปรไฟล์ผู้โพสต์\n\nเปิดระบบค้นหาที่ ${targetUrl} เรียบร้อยแล้วครับ!`);
+  alert(`🎉 สกัดข้อมูลสำเร็จ! ดึงโพสต์จริง ${extractedPosts.length} โพสต์ พร้อมลิงก์โพสต์จริงและลิงก์โปรไฟล์ผู้โพสต์จริง\n\nเปิดระบบค้นหาที่ ${targetUrl} เรียบร้อยแล้วครับ!`);
 })();

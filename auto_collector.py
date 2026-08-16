@@ -43,7 +43,6 @@ def run_auto_collector():
         os.system("pip install playwright")
         from playwright.sync_api import sync_playwright
 
-    # Dedicated session storage for Edge login
     user_data_dir = os.path.join(os.path.expanduser("~"), ".fb_word_detect_edge_session")
     os.makedirs(user_data_dir, exist_ok=True)
 
@@ -71,7 +70,6 @@ def run_auto_collector():
 
         time.sleep(3)
 
-        # Check if user needs to log into Facebook in Edge
         if "login" in page.url.lower():
             print("\n⚠️ กรุณาล็อกอินเข้า Facebook ในหน้าต่าง Microsoft Edge ที่เปิดขึ้นมา...")
             print("เมื่อล็อกอินเรียบร้อยแล้ว ให้กด ENTER ในหน้าต่างนี้เพื่อดึงโพสต์อัตโนมัติ!")
@@ -79,16 +77,16 @@ def run_auto_collector():
             page.goto(target_url, wait_until="domcontentloaded")
             time.sleep(3)
 
-        print("\n⏳ กำลังเลื่อนหน้าฟีดกลุ่มเพื่อดึงโพสต์จริงแบบอัตโนมัติ...")
+        print("\n⏳ กำลังเลื่อนหน้าฟีดกลุ่มเพื่อดึงโพสต์จริงและลิงก์จริง...")
         for i in range(1, 8):
             print(f"   เลื่อนหน้าจอ Edge ({i}/7)...")
             page.evaluate("window.scrollTo(0, document.body.scrollHeight)")
             time.sleep(2)
 
-        print("\n🔍 กำลังสกัดข้อความโพสต์จากกลุ่ม...")
+        print("\n🔍 กำลังสกัดข้อความโพสต์ ลิงก์โพสต์จริง และลิงก์โปรไฟล์ผู้โพสต์จริง...")
         posts_data = page.evaluate("""() => {
             const TARGET_KEYWORD = "รับคน";
-            const postElements = document.querySelectorAll('[role="feed"] > div, [data-pagelet^="FeedUnit"], div[dir="auto"]');
+            const postElements = document.querySelectorAll('[role="feed"] > div, [data-pagelet^="FeedUnit"], .userContentWrapper, div[role="article"]');
             const results = [];
             const seen = new Set();
 
@@ -96,17 +94,65 @@ def run_auto_collector():
                 const textEl = el.querySelector('[dir="auto"]') || el;
                 const content = textEl ? textEl.textContent.trim() : '';
 
-                if (content.length > 20 && !seen.has(content)) {
+                if (content.length > 15 && !seen.has(content)) {
                     seen.add(content);
-                    const authorEl = el.querySelector('h2, h3, strong, a[href*="/user/"], a[href*="/groups/"]');
-                    const authorName = authorEl ? authorEl.textContent.trim() : 'สมาชิกกลุ่มตั้งตี้หารค่าสมองกล';
+
+                    // 1. REAL Author Name & REAL Author Facebook Profile URL
+                    let realAuthorName = 'สมาชิกกลุ่มตั้งตี้หารค่าสมองกล';
+                    let realAuthorUrl = '';
+
+                    const headerAnchors = Array.from(el.querySelectorAll('h2 a, h3 a, h4 a, strong a, a[href*="profile.php"], a[href*="/user/"], a[href*="/people/"], a[href*="/groups/993813573590579/user/"]'));
+
+                    for (const anchor of headerAnchors) {
+                        const href = anchor.getAttribute('href') || '';
+                        const txt = anchor.textContent.trim();
+
+                        if (txt && !txt.includes('Comment') && !txt.includes('Share') && !txt.includes('Like') && !txt.includes('ห้องตั้งตี้')) {
+                            realAuthorName = txt;
+                            if (href && href !== '#' && !href.startsWith('javascript:')) {
+                                realAuthorUrl = href.startsWith('/') ? 'https://www.facebook.com' + href : href;
+                                break;
+                            }
+                        }
+                    }
+
+                    if (!realAuthorUrl) {
+                        const fallbackAuthorLink = el.querySelector('a[href*="profile.php"], a[href*="/user/"], a[href*="/people/"]');
+                        if (fallbackAuthorLink) {
+                            let href = fallbackAuthorLink.getAttribute('href') || '';
+                            realAuthorUrl = href.startsWith('/') ? 'https://www.facebook.com' + href : href;
+                        }
+                    }
+
+                    // 2. REAL Post Permalink / URL Link
+                    let realPostUrl = '';
+                    const permalinkAnchor = el.querySelector('a[href*="/posts/"], a[href*="/permalink/"], a[href*="pfbid"], a[href*="multi_permalinks="], a[href*="story_fbid="]');
+
+                    if (permalinkAnchor) {
+                        let href = permalinkAnchor.getAttribute('href') || '';
+                        realPostUrl = href.startsWith('/') ? 'https://www.facebook.com' + href : href;
+                    } else {
+                        const allLinks = Array.from(el.querySelectorAll('a[role="link"], a[aria-label]'));
+                        for (const link of allLinks) {
+                            const href = link.getAttribute('href') || '';
+                            if (href.includes('/posts/') || href.includes('/permalink/') || href.includes('pfbid') || href.includes('story_fbid=')) {
+                                realPostUrl = href.startsWith('/') ? 'https://www.facebook.com' + href : href;
+                                break;
+                            }
+                        }
+                    }
+
+                    if (!realPostUrl) {
+                        realPostUrl = window.location.href;
+                    }
 
                     results.push({
                         id: 'edge_real_' + Date.now() + '_' + index,
-                        authorName: authorName,
+                        authorName: realAuthorName,
+                        authorUrl: realAuthorUrl || 'https://www.facebook.com/groups/993813573590579',
                         content: content,
                         postDate: new Date().toISOString(),
-                        postUrl: window.location.href,
+                        postUrl: realPostUrl,
                         isSamplePost: false,
                         isMatched: content.includes(TARGET_KEYWORD)
                     });
@@ -115,9 +161,8 @@ def run_auto_collector():
             return results;
         }""")
 
-        print(f"\n🎉 ดึงโพสต์จริงสำเร็จทั้งหมด {len(posts_data)} โพสต์จากกลุ่ม!")
+        print(f"\n🎉 ดึงโพสต์จริงสำเร็จทั้งหมด {len(posts_data)} โพสต์ พร้อมลิงก์โพสต์จริงและโปรไฟล์จริง!")
 
-        # Save output to real_posts.json
         output_file = os.path.join(os.path.dirname(os.path.abspath(__file__)), "real_posts.json")
         with open(output_file, "w", encoding="utf-8") as f:
             json.dump({
@@ -129,14 +174,18 @@ def run_auto_collector():
             }, f, ensure_ascii=False, indent=2)
 
         print(f"💾 บันทึกข้อมูลลงไฟล์: {output_file}")
+
+        # Open Vercel app with real posts encoded in hash
+        encoded_data = json.dumps({"posts": posts_data})
+        import urllib.parse
+        encoded_hash = urllib.parse.quote(encoded_data)
+        target_web_app = f"https://word-detect-facebook.vercel.app/#data={encoded_hash}"
+
+        print(f"\n🚀 กำลังเปิด Web App ค้นหาที่ https://word-detect-facebook.vercel.app/ ในแท็บใหม่ของ Microsoft Edge...")
         
-        target_web_app = "https://word-detect-facebook.vercel.app/"
-        print(f"\n🚀 กำลังเปิด Web App ค้นหาที่ {target_web_app} ในแท็บใหม่ของ Microsoft Edge...")
-        
-        # Open Vercel web app in a new tab in Microsoft Edge
         new_tab = context.new_page()
         new_tab.goto(target_web_app, wait_until="domcontentloaded")
-        print("\n✨ เรียบร้อย! ระบบเปิดหน้า https://word-detect-facebook.vercel.app/ ในแท็บใหม่แล้ว!")
+        print("\n✨ เรียบร้อย! ระบบเปิดหน้าพร้อมแสดงผลลัพธ์โพสต์จริงเรียบร้อยแล้ว!")
         
         input("\nกด Enter เพื่อปิดโปรแกรม > ")
         context.close()
