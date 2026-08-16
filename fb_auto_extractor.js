@@ -1,106 +1,106 @@
 /**
- * Facebook Private Group (993813573590579) Auto-Extractor Script - Microsoft Edge Edition
- * Extracts REAL post contents, REAL post permalinks, AND REAL author account profile links.
+ * Facebook Private Group (993813573590579) F12 Auto-Extractor Script
+ * 
+ * Instructions:
+ * 1. Open your Facebook Group in Microsoft Edge: https://www.facebook.com/groups/993813573590579
+ * 2. Press F12 (or Ctrl+Shift+I) -> Go to "Console" tab.
+ * 3. Type "allow pasting" if Edge prompts you, then paste this script and press Enter.
+ * 4. It will auto-scroll, extract ALL REAL posts, REAL post permalinks, and REAL author profile links, then open Vercel Web App!
  */
 
-(async function autoExtractFBGroupEdge() {
-  console.log("🚀 Starting Automatic Facebook Group Post Extractor (Microsoft Edge)...");
+(async function autoExtractFBGroupF12() {
+  console.log("🚀 Starting Facebook Group F12 Real Post Extractor...");
   
   const TARGET_KEYWORD = "รับคน";
-  const SCROLL_COUNT = 10;
-  const SCROLL_DELAY = 1500;
+  const VERCEL_URL = "https://word-detect-facebook.vercel.app/";
+  const SCROLL_COUNT = 8;
+  const SCROLL_DELAY = 1300;
 
   const sleep = (ms) => new Promise(r => setTimeout(r, ms));
 
+  // 1. Auto Scroll Feed
   for (let i = 1; i <= SCROLL_COUNT; i++) {
-    console.log(`⏳ เลื่อนหน้าจอ Microsoft Edge อัตโนมัติ (${i}/${SCROLL_COUNT})...`);
+    console.log(`⏳ เลื่อนหน้าจอ Facebook (${i}/${SCROLL_COUNT})...`);
     window.scrollTo(0, document.body.scrollHeight);
     await sleep(SCROLL_DELAY);
   }
 
-  // Select all post units in Facebook group feed
-  const postElements = document.querySelectorAll('[role="feed"] > div, [data-pagelet^="FeedUnit"], .userContentWrapper, div[role="article"]');
+  // 2. Select post units
+  const postElements = Array.from(document.querySelectorAll('[role="feed"] > div, [data-pagelet^="FeedUnit"], div[role="article"]'));
   const extractedPosts = [];
-  const seenContent = new Set();
+  const seenText = new Set();
 
   postElements.forEach((el, index) => {
-    // 1. Extract Post Content Text
-    const textEl = el.querySelector('[dir="auto"]') || el;
-    const content = textEl ? textEl.textContent.trim() : '';
+    // Extract text content
+    const textEls = el.querySelectorAll('[dir="auto"]');
+    let fullText = '';
+    textEls.forEach(t => {
+      const txt = t.textContent.trim();
+      if (txt.length > 10 && !txt.includes('Comment') && !txt.includes('Share') && !txt.includes('Like') && !txt.includes('Write a comment')) {
+        if (!fullText.includes(txt)) {
+          fullText += (fullText ? '\n' : '') + txt;
+        }
+      }
+    });
 
-    if (content.length > 15 && !seenContent.has(content)) {
-      seenContent.add(content);
+    if (!fullText) {
+      fullText = el.textContent.trim();
+    }
 
-      // 2. Extract REAL Author Name and REAL Author Facebook Profile URL
-      let realAuthorName = 'สมาชิกกลุ่มตั้งตี้หารค่าสมองกล';
-      let realAuthorUrl = '';
+    if (fullText.length > 15 && !seenText.has(fullText)) {
+      seenText.add(fullText);
 
-      // Search post header links (h2, h3, h4, strong, author links)
-      const headerAnchors = Array.from(el.querySelectorAll('h2 a, h3 a, h4 a, strong a, a[href*="profile.php"], a[href*="/user/"], a[href*="/people/"], a[href*="/groups/993813573590579/user/"]'));
+      // Extract ALL anchors inside post element
+      const anchors = Array.from(el.querySelectorAll('a[href]'));
 
-      for (const anchor of headerAnchors) {
-        const href = anchor.getAttribute('href') || '';
-        const txt = anchor.textContent.trim();
+      let authorName = 'สมาชิกกลุ่มตั้งตี้หารค่าสมองกล';
+      let authorUrl = '';
+      let postUrl = '';
 
-        if (txt && !txt.includes('Comment') && !txt.includes('Share') && !txt.includes('Like') && !txt.includes('ห้องตั้งตี้')) {
-          realAuthorName = txt;
-          if (href && href !== '#' && !href.startsWith('javascript:')) {
-            let fullUrl = href.startsWith('/') ? 'https://www.facebook.com' + href : href;
-            // Clean up tracking params if needed, but preserve profile ID / username
-            realAuthorUrl = fullUrl;
-            break;
+      for (const a of anchors) {
+        const href = a.getAttribute('href') || '';
+        const txt = a.textContent.trim();
+
+        // Check for Individual Post Permalink (pfbid / /posts/ /permalink/)
+        if (!postUrl && (href.includes('/posts/') || href.includes('/permalink/') || href.includes('pfbid') || href.includes('multi_permalinks=') || href.includes('story_fbid='))) {
+          let cleanHref = href.startsWith('/') ? 'https://www.facebook.com' + href : href;
+          postUrl = cleanHref;
+        }
+
+        // Check for Author Profile link
+        if (!authorUrl && txt && txt.length > 1 && !txt.includes('Comment') && !txt.includes('Share') && !txt.includes('Like') && !txt.includes('ห้องตั้งตี้')) {
+          if (href.includes('/user/') || href.includes('profile.php') || href.includes('/people/') || href.startsWith('/')) {
+            // Exclude main group links
+            if (!href.includes('/groups/993813573590579?') && href !== '/groups/993813573590579/') {
+              authorName = txt;
+              authorUrl = href.startsWith('/') ? 'https://www.facebook.com' + href : href;
+            }
           }
         }
       }
 
-      if (!realAuthorUrl) {
-        const fallbackAuthorLink = el.querySelector('a[href*="profile.php"], a[href*="/user/"], a[href*="/people/"]');
-        if (fallbackAuthorLink) {
-          let href = fallbackAuthorLink.getAttribute('href') || '';
-          realAuthorUrl = href.startsWith('/') ? 'https://www.facebook.com' + href : href;
-        }
+      // Fallbacks
+      if (!postUrl) {
+        postUrl = window.location.href;
       }
-
-      // 3. Extract REAL Post Permalink / URL Link
-      let realPostUrl = '';
-      const permalinkAnchor = el.querySelector('a[href*="/posts/"], a[href*="/permalink/"], a[href*="pfbid"], a[href*="multi_permalinks="], a[href*="story_fbid="]');
-
-      if (permalinkAnchor) {
-        let href = permalinkAnchor.getAttribute('href') || '';
-        realPostUrl = href.startsWith('/') ? 'https://www.facebook.com' + href : href;
-      } else {
-        // Fallback: search all anchors in post header for timestamp links
-        const allLinks = Array.from(el.querySelectorAll('a[role="link"], a[aria-label]'));
-        for (const link of allLinks) {
-          const href = link.getAttribute('href') || '';
-          if (href.includes('/posts/') || href.includes('/permalink/') || href.includes('pfbid') || href.includes('story_fbid=')) {
-            realPostUrl = href.startsWith('/') ? 'https://www.facebook.com' + href : href;
-            break;
-          }
-        }
+      if (!authorUrl) {
+        authorUrl = 'https://www.facebook.com/groups/993813573590579';
       }
-
-      // If no specific post permalink found, fallback to group URL
-      if (!realPostUrl) {
-        realPostUrl = window.location.href;
-      }
-
-      const isMatched = content.includes(TARGET_KEYWORD);
 
       extractedPosts.push({
-        id: `real_edge_${Date.now()}_${index}`,
-        authorName: realAuthorName,
-        authorUrl: realAuthorUrl || 'https://www.facebook.com/groups/993813573590579',
-        content: content,
+        id: `f12_real_${Date.now()}_${index}`,
+        authorName: authorName,
+        authorUrl: authorUrl,
+        content: fullText,
         postDate: new Date().toISOString(),
-        postUrl: realPostUrl,
+        postUrl: postUrl,
         isSamplePost: false,
-        isMatched: isMatched
+        isMatched: fullText.includes(TARGET_KEYWORD)
       });
     }
   });
 
-  console.log(`✅ ดึงโพสต์จริงสำเร็จ ${extractedPosts.length} โพสต์ พร้อมลิงก์โพสต์จริงและลิงก์โปรไฟล์ผู้โพสต์จริง!`);
+  console.log(`🎉 สกัดข้อมูลสำเร็จ ${extractedPosts.length} โพสต์จริง!`);
 
   const payload = {
     groupName: "ห้องตั้งตี้หารค่าสมองกล (Google AI)",
@@ -109,11 +109,11 @@
     posts: extractedPosts
   };
 
-  // Encode payload into URL hash parameter
+  // Encode payload into URL Hash for instant transfer
   const encodedPayload = encodeURIComponent(JSON.stringify(payload));
-  const targetUrl = `https://word-detect-facebook.vercel.app/#data=${encodedPayload}`;
+  const targetAppUrl = `${VERCEL_URL}#data=${encodedPayload}`;
 
-  // Copy payload to Clipboard as backup
+  // Backup payload to Clipboard
   try {
     if (navigator.clipboard) {
       await navigator.clipboard.writeText(JSON.stringify(payload));
@@ -121,8 +121,8 @@
     }
   } catch (e) {}
 
-  // Open Vercel Web App in a new tab with encoded hash data
-  window.open(targetUrl, "_blank");
+  // Open Vercel Web App in a new tab with encoded real post data
+  window.open(targetAppUrl, "_blank");
 
-  alert(`🎉 สกัดข้อมูลสำเร็จ! ดึงโพสต์จริง ${extractedPosts.length} โพสต์ พร้อมลิงก์โพสต์จริงและลิงก์โปรไฟล์ผู้โพสต์จริง\n\nเปิดระบบค้นหาที่ ${targetUrl} เรียบร้อยแล้วครับ!`);
+  alert(`🎉 สกัดเรียบร้อย! ดึง ${extractedPosts.length} โพสต์จริงสำเร็จ พร้อมลิงก์โพสต์จริงและลิงก์โปรไฟล์จริง\n\nเปิดหน้าเว็บค้นหาที่ ${VERCEL_URL} เรียบร้อยแล้วครับ!`);
 })();

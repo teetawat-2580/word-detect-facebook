@@ -121,8 +121,8 @@
 
         <!-- Quick Guide Banner -->
         <div style="background: rgba(16, 185, 129, 0.08); border: 1px dashed rgba(16, 185, 129, 0.3); border-radius: 12px; padding: 0.9rem; font-size: 0.82rem; color: #94a3b8;">
-          <strong style="color: #34d399;">💡 วิธีนำเข้าข้อมูลกลุ่ม:</strong><br>
-          เปิดกลุ่ม "ห้องตั้งตี้หารค่าสมองกล" ใน Chrome กด <kbd style="background: #1e293b; padding: 2px 5px; border-radius: 4px;">Ctrl+S</kbd> บันทึกไฟล์ HTML แล้วลากมาวางในปุ่ม Import Data ได้เลย!
+          <strong style="color: #34d399;">⚡ ดึงโพสต์จริงใน 10 วินาที:</strong><br>
+          เปิดกลุ่มใน Edge -> กด <kbd style="background: #1e293b; padding: 2px 5px; border-radius: 4px;">F12</kbd> -> Console -> วางโค้ด F12 Extractor แล้วกด Enter!
         </div>
 
       </div>
@@ -228,8 +228,19 @@
       </div>
       <div class="modal-body">
         
-        <p style="font-size: 0.9rem; color: #94a3b8; margin-bottom: 1.25rem;">
-          อัปโหลดไฟล์ HTML ที่บันทึกจากหน้ากลุ่ม Facebook, ไฟล์ Excel (.xlsx, .csv), หรือวางข้อความโพสต์ด้านล่าง
+        <!-- F12 Extractor Script Copy Banner -->
+        <div style="background: rgba(24, 119, 242, 0.1); border: 1px solid rgba(24, 119, 242, 0.4); border-radius: 12px; padding: 1rem; margin-bottom: 1.25rem;">
+          <h4 style="font-family: var(--font-heading); color: #60a5fa; margin-bottom: 0.4rem;">⚡ คัดลอกโค้ด F12 Extractor สำหรับดึงโพสต์จริง</h4>
+          <p style="font-size: 0.85rem; color: #cbd5e1; margin-bottom: 0.75rem;">
+            เปิดกลุ่มใน Microsoft Edge กด <kbd style="background: #1e293b; padding: 2px 5px; border-radius: 4px;">F12</kbd> -> วางสคริปต์นี้แล้วกด Enter เพื่อสกัดโพสต์จริง + ลิงก์โพสต์จริง + โปรไฟล์จริง
+          </p>
+          <button id="copy-f12-script-btn" class="btn btn-primary" style="width: 100%;">
+            📋 คลิกที่นี่เพื่อคัดลอกสคริปต์ F12 Extractor
+          </button>
+        </div>
+
+        <p style="font-size: 0.9rem; color: #94a3b8; margin-bottom: 1rem;">
+          หรืออัปโหลดไฟล์ HTML ที่บันทึกจากหน้ากลุ่ม Facebook, ไฟล์ Excel (.xlsx, .csv), หรือวางข้อความโพสต์ด้านล่าง
         </p>
 
         <!-- Dropzone -->
