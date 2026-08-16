@@ -1,11 +1,6 @@
 /**
  * Facebook Private Group (993813573590579) Auto-Extractor Script - Microsoft Edge Edition
- * 
- * Instructions for Microsoft Edge:
- * 1. Open your Facebook Group in Microsoft Edge: https://www.facebook.com/groups/993813573590579
- * 2. Press F12 (or Ctrl+Shift+I) in Microsoft Edge -> Go to "Console" tab.
- * 3. Paste this script and press Enter.
- * 4. It will automatically scroll Microsoft Edge, extract real posts matching "รับคน", and open https://word-detect-facebook.vercel.app/ with real results!
+ * Extracts post content, author name, AND author Facebook profile URL link.
  */
 
 (async function autoExtractFBGroupEdge() {
@@ -34,14 +29,24 @@
     if (content.length > 15 && !seenContent.has(content)) {
       seenContent.add(content);
 
-      const authorEl = el.querySelector('h2, h3, strong, a[href*="/user/"], a[href*="/groups/"]');
+      // Extract author name and profile link URL
+      const authorEl = el.querySelector('h2 a, h3 a, strong a, a[href*="/user/"], a[href*="profile.php"], a[href*="/groups/"]');
       const authorName = authorEl ? authorEl.textContent.trim() : 'สมาชิกกลุ่มตั้งตี้หารค่าสมองกล';
+      
+      let authorUrl = authorEl ? authorEl.getAttribute('href') || '' : '';
+      if (authorUrl && authorUrl.startsWith('/')) {
+        authorUrl = 'https://www.facebook.com' + authorUrl;
+      }
+      if (!authorUrl || authorUrl === 'https://www.facebook.com#') {
+        authorUrl = 'https://www.facebook.com/groups/993813573590579';
+      }
 
       const isMatched = content.includes(TARGET_KEYWORD);
 
       extractedPosts.push({
         id: `edge_auto_${Date.now()}_${index}`,
         authorName: authorName,
+        authorUrl: authorUrl,
         content: content,
         postDate: new Date().toISOString(),
         postUrl: window.location.href,
@@ -51,7 +56,7 @@
     }
   });
 
-  console.log(`✅ ดึงโพสต์จริงสำเร็จ ${extractedPosts.length} โพสต์จาก Microsoft Edge!`);
+  console.log(`✅ ดึงโพสต์จริงสำเร็จ ${extractedPosts.length} โพสต์ พร้อมลิงก์โปรไฟล์ผู้โพสต์!`);
 
   const payload = {
     groupName: "ห้องตั้งตี้หารค่าสมองกล (Google AI)",
@@ -60,11 +65,11 @@
     posts: extractedPosts
   };
 
-  // 1. Encode payload into URL hash parameter
+  // Encode payload into URL hash parameter
   const encodedPayload = encodeURIComponent(JSON.stringify(payload));
   const targetUrl = `https://word-detect-facebook.vercel.app/#data=${encodedPayload}`;
 
-  // 2. Copy payload to Clipboard as backup
+  // Copy payload to Clipboard as backup
   try {
     if (navigator.clipboard) {
       await navigator.clipboard.writeText(JSON.stringify(payload));
@@ -72,8 +77,8 @@
     }
   } catch (e) {}
 
-  // 3. Open Vercel Web App in a new tab with encoded hash data
+  // Open Vercel Web App in a new tab with encoded hash data
   window.open(targetUrl, "_blank");
 
-  alert(`🎉 สกัดข้อมูลสำเร็จ! ดึงโพสต์จริงได้ ${extractedPosts.length} โพสต์จาก Microsoft Edge\n\nเปิดระบบค้นหาพร้อมแสดงผลลัพธ์ในแท็บใหม่เรียบร้อยแล้วครับ!`);
+  alert(`🎉 สกัดข้อมูลสำเร็จ! ดึงโพสต์จริงได้ ${extractedPosts.length} โพสต์ พร้อมลิงก์โปรไฟล์ผู้โพสต์\n\nเปิดระบบค้นหาที่ ${targetUrl} เรียบร้อยแล้วครับ!`);
 })();

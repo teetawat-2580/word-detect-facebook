@@ -1,7 +1,6 @@
 /**
  * Demo Sample Dataset for Facebook Private Group: "ห้องตั้งตี้หารค่าสมองกล (Google AI)"
- * Note: These are simulated sample posts for demonstration purposes.
- * To search REAL live posts from your private group, save the group page (Ctrl+S) and drag the .html file into "Import Data"!
+ * Includes Author Profile URLs for direct account linking.
  */
 
 window.SAMPLE_FB_GROUP_DATA = {
@@ -13,13 +12,14 @@ window.SAMPLE_FB_GROUP_DATA = {
   posts: [
     {
       id: "post_ai_01",
-      authorName: "Kitti TechDev (Sample)",
+      authorName: "Kitti TechDev",
+      authorUrl: "https://www.facebook.com/groups/993813573590579/user/10008291049281",
       authorAvatar: "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=100&auto=format&fit=crop&q=80",
       postDate: "2026-08-16T20:15:00Z",
       postUrl: "https://www.facebook.com/groups/993813573590579",
       content: "[ตัวอย่างโพสต์สาธิต] ตั้งตี้ด่วน! รับคนหาร Google One AI Premium (Gemini Advanced 2TB) ว่างอีก 2 ที่ครับ ตกเดือนละ 175 บาท ใช้งานผ่านการเชิญ Family Share ใครสนใจรับคนเข้าตี้ทัก DM มาได้เลยครับ",
       reactionsCount: 54,
-      commentsCount: 3,
+      commentsCount: 2,
       hasLinks: false,
       isSamplePost: true,
       comments: [
@@ -39,7 +39,8 @@ window.SAMPLE_FB_GROUP_DATA = {
     },
     {
       id: "post_ai_02",
-      authorName: "Pariya AI Creator (Sample)",
+      authorName: "Pariya AI Creator",
+      authorUrl: "https://www.facebook.com/groups/993813573590579/user/10009402910492",
       authorAvatar: "https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=100&auto=format&fit=crop&q=80",
       postDate: "2026-08-16T15:40:00Z",
       postUrl: "https://www.facebook.com/groups/993813573590579",
@@ -59,7 +60,8 @@ window.SAMPLE_FB_GROUP_DATA = {
     },
     {
       id: "post_ai_03",
-      authorName: "Somchai Cloud (Sample)",
+      authorName: "Somchai Cloud",
+      authorUrl: "https://www.facebook.com/groups/993813573590579/user/10007583920194",
       authorAvatar: "https://images.unsplash.com/photo-1570295999919-56ceb5ecca61?w=100&auto=format&fit=crop&q=80",
       postDate: "2026-08-15T12:10:00Z",
       postUrl: "https://www.facebook.com/groups/993813573590579",

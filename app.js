@@ -83,8 +83,7 @@
         if (parsed && parsed.posts && parsed.posts.length > 0) {
           loadDataset(parsed.posts, "ข้อมูลจริงจาก Facebook Auto-Extractor");
           loadedData = true;
-          showToast(`🎉 โหลด ${parsed.posts.length} โพสต์จริงจาก Facebook สำเร็จ!`, "success");
-          // Clean URL hash without reload
+          showToast(`🎉 โหลด ${parsed.posts.length} โพสต์จริงพร้อมลิงก์โปรไฟล์ผู้โพสต์สำเร็จ!`, "success");
           if (window.history && window.history.replaceState) {
             window.history.replaceState(null, "", window.location.pathname);
           }
@@ -99,7 +98,7 @@
       loadedData = await tryLoadRealPostsJson();
     }
 
-    // 3. Fallback to localStorage (if same domain)
+    // 3. Fallback to localStorage
     if (!loadedData) {
       const cached = localStorage.getItem("AUTO_EXTRACTED_FB_POSTS");
       if (cached) {
@@ -282,6 +281,7 @@
     state.posts = postsArray.map((p, index) => ({
       id: p.id || `post_${Date.now()}_${index}`,
       authorName: p.authorName || p.author || 'สมาชิกกลุ่มตั้งตี้หารค่าสมองกล',
+      authorUrl: p.authorUrl || p.userUrl || 'https://www.facebook.com/groups/993813573590579',
       authorAvatar: p.authorAvatar || getAvatarPlaceholder(p.authorName || 'User'),
       postDate: p.postDate || p.date || new Date().toISOString(),
       postUrl: p.postUrl || 'https://www.facebook.com/groups/993813573590579',
@@ -358,6 +358,7 @@
               extractedPosts.push({
                 id: `real_html_${idCounter++}`,
                 authorName: 'สมาชิกกลุ่มตั้งตี้หารค่าสมองกล (จากไฟล์จริง)',
+                authorUrl: 'https://www.facebook.com/groups/993813573590579',
                 content: txt,
                 postDate: new Date().toISOString(),
                 postUrl: 'https://www.facebook.com/groups/993813573590579',
@@ -371,13 +372,20 @@
           postContainers.forEach(container => {
             const textEl = container.querySelector('[dir="auto"]') || container;
             const content = textEl ? textEl.textContent.trim() : '';
-            const authorEl = container.querySelector('h2, h3, strong, a[href*="/user/"], a[href*="/groups/"]');
+            const authorEl = container.querySelector('h2 a, h3 a, strong a, a[href*="/user/"], a[href*="profile.php"], a[href*="/groups/"]');
             const authorName = authorEl ? authorEl.textContent.trim() : 'สมาชิกกลุ่มตั้งตี้หารค่าสมองกล';
+            
+            let authorUrl = authorEl ? authorEl.getAttribute('href') || '' : '';
+            if (authorUrl && authorUrl.startsWith('/')) {
+              authorUrl = 'https://www.facebook.com' + authorUrl;
+            }
+            if (!authorUrl) authorUrl = 'https://www.facebook.com/groups/993813573590579';
 
             if (content.length > 15) {
               extractedPosts.push({
                 id: `real_fb_${idCounter++}`,
                 authorName: authorName,
+                authorUrl: authorUrl,
                 content: content,
                 postDate: new Date().toISOString(),
                 postUrl: 'https://www.facebook.com/groups/993813573590579',
@@ -420,12 +428,14 @@
           const keys = Object.keys(row);
           const contentKey = keys.find(k => /content|post|message|text|body|ข้อความ|รายละเอียด/i.test(k)) || keys[0];
           const authorKey = keys.find(k => /author|user|name|poster|sender|ผู้โพสต์|ชื่อ/i.test(k));
+          const authorUrlKey = keys.find(k => /profile|account|authorurl|author_url|ลิงก์โปรไฟล์/i.test(k));
           const dateKey = keys.find(k => /date|time|created|วันที่/i.test(k));
           const urlKey = keys.find(k => /url|link|ลิงก์/i.test(k));
 
           return {
             id: `excel_${idx}`,
             authorName: authorKey ? String(row[authorKey]) : 'สมาชิกกลุ่มตั้งตี้หารค่าสมองกล',
+            authorUrl: authorUrlKey ? String(row[authorUrlKey]) : 'https://www.facebook.com/groups/993813573590579',
             content: contentKey ? String(row[contentKey]) : '',
             postDate: dateKey ? String(row[dateKey]) : new Date().toISOString(),
             postUrl: urlKey ? String(row[urlKey]) : 'https://www.facebook.com/groups/993813573590579',
@@ -482,6 +492,7 @@
     const posts = paragraphs.map((p, idx) => ({
       id: `raw_${idx}`,
       authorName: 'ข้อความจริงที่คัดลอกมา',
+      authorUrl: 'https://www.facebook.com/groups/993813573590579',
       content: p.trim(),
       postDate: new Date().toISOString(),
       postUrl: 'https://www.facebook.com/groups/993813573590579',
@@ -594,7 +605,7 @@
     return string.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
   }
 
-  // Render Post Feed with Word Highlighting
+  // Render Post Feed with Word Highlighting & Author Profile Links
   function renderFeed() {
     if (!DOM.postsFeed) return;
 
@@ -642,23 +653,30 @@
         timeStyle: 'short'
       });
 
-      const badgeLabel = post.isSamplePost ? '⚠️ ข้อมูลสาธิต (Sample Data)' : '✅ โพสต์จริงจาก Facebook';
+      const badgeLabel = post.isSamplePost ? '⚠️ ข้อมูลสาธิต' : '✅ โพสต์จริงจาก Facebook';
       const badgeStyle = post.isSamplePost ? 'background: rgba(245, 158, 11, 0.15); color: #fbbf24; border: 1px solid rgba(245, 158, 11, 0.3);' : 'background: rgba(16, 185, 129, 0.15); color: #34d399; border: 1px solid rgba(16, 185, 129, 0.3);';
 
       return `
         <article class="post-card ${query ? 'highlighted-card' : ''}">
           <header class="post-header">
             <div class="author-meta">
-              <img class="author-avatar" src="${escapeHtml(post.authorAvatar)}" alt="${escapeHtml(post.authorName)}" onerror="this.src='https://ui-avatars.com/api/?name=${encodeURIComponent(post.authorName)}&background=1877F2&color=fff'">
+              <a href="${escapeHtml(post.authorUrl)}" target="_blank" title="เปิดโปรไฟล์ Facebook ของ ${escapeHtml(post.authorName)}">
+                <img class="author-avatar" src="${escapeHtml(post.authorAvatar)}" alt="${escapeHtml(post.authorName)}" onerror="this.src='https://ui-avatars.com/api/?name=${encodeURIComponent(post.authorName)}&background=1877F2&color=fff'">
+              </a>
               <div>
-                <div class="author-name">${escapeHtml(post.authorName)}</div>
+                <a href="${escapeHtml(post.authorUrl)}" target="_blank" class="author-name-link">
+                  👤 ${escapeHtml(post.authorName)} ↗
+                </a>
                 <div class="post-timestamp">📅 ${formattedDate} • ห้องตั้งตี้หารค่าสมองกล</div>
               </div>
             </div>
-            <div style="display: flex; gap: 0.5rem; align-items: center;">
+            <div style="display: flex; gap: 0.5rem; align-items: center; flex-wrap: wrap;">
               <span class="post-badge" style="${badgeStyle}">${badgeLabel}</span>
+              <a href="${escapeHtml(post.authorUrl)}" target="_blank" class="post-badge" style="background: rgba(59, 130, 246, 0.15); color: #60a5fa; border: 1px solid rgba(59, 130, 246, 0.3); text-decoration: none;">
+                👤 โปรไฟล์ผู้โพสต์ ↗
+              </a>
               <a href="${escapeHtml(post.postUrl)}" target="_blank" class="post-badge" style="text-decoration: none;">
-                🔗 เปิดใน Facebook ↗
+                🔗 โพสต์ Facebook ↗
               </a>
             </div>
           </header>
@@ -786,7 +804,7 @@
     showToast("รีเซ็ตตัวกรองแล้ว ค้นหาคำว่า 'รับคน' ตามเดิม", "success");
   }
 
-  // Export Results to Excel / CSV
+  // Export Results to Excel / CSV with Author Profile Links
   function exportSearchResults() {
     if (state.filteredPosts.length === 0) {
       showToast("ไม่มีผลการค้นหาสำหรับส่งออก!", "warning");
@@ -796,8 +814,8 @@
     const rows = state.filteredPosts.map(p => ({
       "ประเภท": p.isSamplePost ? "ข้อมูลสาธิต" : "โพสต์จริง",
       "กลุ่ม (Group)": "ห้องตั้งตี้หารค่าสมองกล (Google AI)",
-      "URL กลุ่ม": "https://www.facebook.com/groups/993813573590579",
-      "ผู้โพสต์ (Author)": p.authorName,
+      "ชื่อผู้โพสต์ (Author)": p.authorName,
+      "ลิงก์โปรไฟล์ผู้โพสต์ (Profile URL)": p.authorUrl,
       "วันที่ (Date)": p.postDate,
       "ข้อความโพสต์ (Content)": p.content,
       "จำนวนคอมเมนต์": p.commentsCount,

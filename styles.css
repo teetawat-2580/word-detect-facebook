@@ -2,7 +2,7 @@
    FB Group Search Pro - Core Stylesheet & Design System
    ========================================================================== */
 
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@500;600;700;800&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@500;600;700;800&family=Sarabun:wght@300;400;500;600;700&display=swap');
 
 :root {
   /* Color Palette */
@@ -45,7 +45,7 @@
   --radius-full: 9999px;
 
   /* Typography */
-  --font-main: 'Inter', system-ui, -apple-system, sans-serif;
+  --font-main: 'Sarabun', 'Inter', system-ui, -apple-system, sans-serif;
   --font-heading: 'Outfit', system-ui, -apple-system, sans-serif;
 
   --transition-fast: 0.15s ease;
@@ -377,13 +377,6 @@ input:checked + .slider:before {
   border-color: rgba(255, 255, 255, 0.2);
 }
 
-.btn-icon {
-  width: 40px;
-  height: 40px;
-  padding: 0;
-  border-radius: var(--radius-md);
-}
-
 /* Content Body */
 .main-container {
   padding: 2rem;
@@ -447,7 +440,7 @@ input:checked + .slider:before {
   color: var(--text-muted);
 }
 
-/* Filter Summary Bar */
+/* Active Filters Bar */
 .active-filters-bar {
   display: flex;
   align-items: center;
@@ -479,22 +472,6 @@ input:checked + .slider:before {
 
 .filter-pill-remove:hover {
   color: white;
-}
-
-/* Feed Container */
-.feed-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-}
-
-.feed-title {
-  font-family: var(--font-heading);
-  font-size: 1.35rem;
-  font-weight: 700;
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
 }
 
 /* Post Cards */
@@ -544,12 +521,24 @@ input:checked + .slider:before {
   border-radius: 50%;
   object-fit: cover;
   border: 2px solid rgba(24, 119, 242, 0.4);
+  transition: transform var(--transition-fast);
 }
 
-.author-name {
-  font-weight: 600;
-  font-size: 1rem;
-  color: var(--text-main);
+.author-avatar:hover {
+  transform: scale(1.1);
+}
+
+.author-name-link {
+  font-weight: 700;
+  font-size: 1.05rem;
+  color: #f8fafc;
+  text-decoration: none;
+  transition: color var(--transition-fast);
+}
+
+.author-name-link:hover {
+  color: #60a5fa;
+  text-decoration: underline;
 }
 
 .post-timestamp {
@@ -636,7 +625,7 @@ mark.search-highlight {
   padding: 4rem 2rem;
   background: var(--bg-card);
   border-radius: var(--radius-lg);
-  border: 1px border-glass;
+  border: 1px solid var(--border-glass);
 }
 
 .empty-icon {
@@ -774,7 +763,6 @@ mark.search-highlight {
   to { transform: translateX(0); opacity: 1; }
 }
 
-/* Responsive adjustments */
 @media (max-width: 900px) {
   .app-sidebar {
     transform: translateX(-100%);
