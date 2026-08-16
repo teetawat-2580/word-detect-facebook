@@ -1,10 +1,11 @@
 /**
  * Facebook Private Group (993813573590579) F12 Auto-Extractor Script
  * Target Keywords: "รับคน", "เปิดหาสมาชิก"
+ * Extracts REAL Post Timestamp, REAL Post Permalinks, REAL Author Names & Profile Links.
  */
 
 (async function autoExtractFBGroupF12() {
-  console.log("🚀 Starting Facebook Group F12 Real Post Extractor...");
+  console.log("🚀 Starting Facebook Group F12 Real Post Extractor (with Real Timestamps)...");
   
   const TARGET_KEYWORDS = ["รับคน", "เปิดหาสมาชิก"];
   const VERCEL_URL = "https://word-detect-facebook.vercel.app/";
@@ -27,6 +28,7 @@
   const seenText = new Set();
 
   postElements.forEach((el, index) => {
+    // 1. Extract post text content
     const textEls = el.querySelectorAll('[dir="auto"]');
     let fullText = '';
     textEls.forEach(t => {
@@ -45,6 +47,20 @@
     if (fullText.length > 15 && !seenText.has(fullText)) {
       seenText.add(fullText);
 
+      // 2. Extract REAL Post Timestamp
+      let realPostTime = '';
+      const timeEl = el.querySelector('time') || el.querySelector('abbr') || el.querySelector('a[href*="/posts/"] span, a[href*="pfbid"] span');
+      if (timeEl) {
+        realPostTime = timeEl.getAttribute('title') || timeEl.getAttribute('aria-label') || timeEl.textContent.trim();
+      }
+      if (!realPostTime) {
+        const timestampAnchor = el.querySelector('a[href*="/posts/"], a[href*="/permalink/"], a[href*="pfbid"]');
+        if (timestampAnchor) {
+          realPostTime = timestampAnchor.textContent.trim();
+        }
+      }
+
+      // 3. Extract ALL anchors inside post element for permalink and author profile link
       const anchors = Array.from(el.querySelectorAll('a[href]'));
 
       let authorName = 'สมาชิกกลุ่มตั้งตี้หารค่าสมองกล';
@@ -79,7 +95,8 @@
         authorName: authorName,
         authorUrl: authorUrl,
         content: fullText,
-        postDate: new Date().toISOString(),
+        postDate: realPostTime || new Date().toISOString(),
+        postTimeText: realPostTime || '',
         postUrl: postUrl,
         isSamplePost: false,
         isMatched: isMatched
@@ -87,7 +104,7 @@
     }
   });
 
-  console.log(`🎉 สกัดข้อมูลสดใหม่สำเร็จ ${extractedPosts.length} โพสต์จริง!`);
+  console.log(`🎉 สกัดข้อมูลสำเร็จ ${extractedPosts.length} โพสต์จริง (พร้อมเวลาโพสต์จริง)!`);
 
   const payload = {
     groupName: "ห้องตั้งตี้หารค่าสมองกล (Google AI)",
@@ -106,5 +123,5 @@
   } catch (e) {}
 
   window.open(targetAppUrl, "_blank");
-  alert(`🎉 สกัดเรียบร้อย! ดึง ${extractedPosts.length} โพสต์สดใหม่สำเร็จ ("รับคน" / "เปิดหาสมาชิก")\n\nเปิดหน้าเว็บค้นหาเรียบร้อยแล้วครับ!`);
+  alert(`🎉 สกัดเรียบร้อย! ดึง ${extractedPosts.length} โพสต์สดใหม่สำเร็จ พร้อมเวลาโพสต์จริง!\n\nเปิดหน้าเว็บค้นหาเรียบร้อยแล้วครับ!`);
 })();

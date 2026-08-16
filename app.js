@@ -30,7 +30,7 @@
   };
 
   // Minified 1-Click Bookmarklet Extractor Code
-  const BOOKMARKLET_CODE = `javascript:(async function(){const K=["รับคน","เปิดหาสมาชิก"],V="https://word-detect-facebook.vercel.app/";window.scrollTo(0,0);await new Promise(r=>setTimeout(r,800));for(let i=1;i<=8;i++){window.scrollTo(0,document.body.scrollHeight);await new Promise(r=>setTimeout(r,1200));}const P=Array.from(document.querySelectorAll('[role="feed"] > div, [data-pagelet^="FeedUnit"], div[role="article"]')),res=[],seen=new Set();P.forEach((el,idx)=>{const T=Array.from(el.querySelectorAll('[dir="auto"]')).map(t=>t.textContent.trim()).filter(t=>t.length>10&&!t.includes('Comment')&&!t.includes('Share')).join('\\n')||el.textContent.trim();if(T.length>15&&!seen.has(T)){seen.add(T);const A=Array.from(el.querySelectorAll('a[href]'));let au='สมาชิกกลุ่มตั้งตี้หารค่าสมองกล',auUrl='',pUrl='';for(const a of A){const h=a.getAttribute('href')||'',txt=a.textContent.trim();if(!pUrl&&(h.includes('/posts/')||h.includes('/permalink/')||h.includes('pfbid')||h.includes('multi_permalinks=')))pUrl=h.startsWith('/')?'https://www.facebook.com'+h:h;if(!auUrl&&txt&&txt.length>1&&!txt.includes('Comment')&&!txt.includes('Share')&&!txt.includes('ห้องตั้งตี้')){if(h.includes('/user/')||h.includes('profile.php')||h.includes('/people/')||h.startsWith('/')){if(!h.includes('/groups/993813573590579?')){au=txt;auUrl=h.startsWith('/')?'https://www.facebook.com'+h:h;}}}}res.push({id:'bm_'+Date.now()+'_'+idx,authorName:au,authorUrl:auUrl||'https://www.facebook.com/groups/993813573590579',content:T,postDate:new Date().toISOString(),postUrl:pUrl||window.location.href,isSamplePost:false,isMatched:K.some(k=>T.includes(k))});}});const payload={groupName:"ห้องตั้งตี้หารค่าสมองกล (Google AI)",groupId:"993813573590579",timestamp:new Date().toISOString(),posts:res};const target=V+'#data='+encodeURIComponent(JSON.stringify(payload));window.open(target,'_blank');})();`;
+  const BOOKMARKLET_CODE = `javascript:(async function(){const K=["รับคน","เปิดหาสมาชิก"],V="https://word-detect-facebook.vercel.app/";window.scrollTo(0,0);await new Promise(r=>setTimeout(r,800));for(let i=1;i<=8;i++){window.scrollTo(0,document.body.scrollHeight);await new Promise(r=>setTimeout(r,1200));}const P=Array.from(document.querySelectorAll('[role="feed"] > div, [data-pagelet^="FeedUnit"], div[role="article"]')),res=[],seen=new Set();P.forEach((el,idx)=>{const T=Array.from(el.querySelectorAll('[dir="auto"]')).map(t=>t.textContent.trim()).filter(t=>t.length>10&&!t.includes('Comment')&&!t.includes('Share')).join('\\n')||el.textContent.trim();if(T.length>15&&!seen.has(T)){seen.add(T);let realPostTime='';const timeEl=el.querySelector('time')||el.querySelector('abbr')||el.querySelector('a[href*="/posts/"] span, a[href*="pfbid"] span');if(timeEl)realPostTime=timeEl.getAttribute('title')||timeEl.getAttribute('aria-label')||timeEl.textContent.trim();const A=Array.from(el.querySelectorAll('a[href]'));let au='สมาชิกกลุ่มตั้งตี้หารค่าสมองกล',auUrl='',pUrl='';for(const a of A){const h=a.getAttribute('href')||'',txt=a.textContent.trim();if(!pUrl&&(h.includes('/posts/')||h.includes('/permalink/')||h.includes('pfbid')||h.includes('multi_permalinks=')))pUrl=h.startsWith('/')?'https://www.facebook.com'+h:h;if(!auUrl&&txt&&txt.length>1&&!txt.includes('Comment')&&!txt.includes('Share')&&!txt.includes('ห้องตั้งตี้')){if(h.includes('/user/')||h.includes('profile.php')||h.includes('/people/')||h.startsWith('/')){if(!h.includes('/groups/993813573590579?')){au=txt;auUrl=h.startsWith('/')?'https://www.facebook.com'+h:h;}}}}res.push({id:'bm_'+Date.now()+'_'+idx,authorName:au,authorUrl:auUrl||'https://www.facebook.com/groups/993813573590579',content:T,postDate:realPostTime||new Date().toISOString(),postTimeText:realPostTime||'',postUrl:pUrl||window.location.href,isSamplePost:false,isMatched:K.some(k=>T.includes(k))});}});const payload={groupName:"ห้องตั้งตี้หารค่าสมองกล (Google AI)",groupId:"993813573590579",timestamp:new Date().toISOString(),posts:res};const target=V+'#data='+encodeURIComponent(JSON.stringify(payload));window.open(target,'_blank');})();`;
 
   // F12 Extractor Script String for 1-click clipboard copy
   const F12_EXTRACTOR_SCRIPT = `(async function autoExtractFBGroupF12() {
@@ -67,6 +67,11 @@
 
     if (fullText.length > 15 && !seenText.has(fullText)) {
       seenText.add(fullText);
+
+      let realPostTime = '';
+      const timeEl = el.querySelector('time') || el.querySelector('abbr') || el.querySelector('a[href*="/posts/"] span, a[href*="pfbid"] span');
+      if (timeEl) realPostTime = timeEl.getAttribute('title') || timeEl.getAttribute('aria-label') || timeEl.textContent.trim();
+
       const anchors = Array.from(el.querySelectorAll('a[href]'));
       let authorName = 'สมาชิกกลุ่มตั้งตี้หารค่าสมองกล';
       let authorUrl = '';
@@ -98,7 +103,8 @@
         authorName: authorName,
         authorUrl: authorUrl,
         content: fullText,
-        postDate: new Date().toISOString(),
+        postDate: realPostTime || new Date().toISOString(),
+        postTimeText: realPostTime || '',
         postUrl: postUrl,
         isSamplePost: false,
         isMatched: TARGET_KEYWORDS.some(kw => fullText.includes(kw))
@@ -112,7 +118,7 @@
 
   try { await navigator.clipboard.writeText(JSON.stringify(payload)); } catch (e) {}
   window.open(targetAppUrl, "_blank");
-  alert(\`🎉 สกัดเรียบร้อย! ดึง \${extractedPosts.length} โพสต์สดใหม่สำเร็จ ("รับคน" / "เปิดหาสมาชิก")\\n\\nเปิดหน้าเว็บค้นหาแล้วครับ!\`);
+  alert(\`🎉 สกัดเรียบร้อย! ดึง \${extractedPosts.length} โพสต์สดใหม่สำเร็จ พร้อมเวลาโพสต์จริง!\\n\\nเปิดหน้าเว็บค้นหาแล้วครับ!\`);
 })();`;
 
   // DOM Cache
@@ -387,6 +393,7 @@
       authorUrl: p.authorUrl || p.userUrl || 'https://www.facebook.com/groups/993813573590579',
       authorAvatar: p.authorAvatar || getAvatarPlaceholder(p.authorName || 'User'),
       postDate: p.postDate || p.date || new Date().toISOString(),
+      postTimeText: p.postTimeText || p.timeText || '',
       postUrl: p.postUrl || 'https://www.facebook.com/groups/993813573590579',
       content: p.content || p.text || p.message || '',
       reactionsCount: p.reactionsCount || p.likes || 0,
@@ -751,12 +758,13 @@
         `;
       }
 
-      const formattedDate = new Date(post.postDate).toLocaleString('th-TH', {
+      // Display Real Post Time Text if present, otherwise format timestamp
+      const formattedDate = post.postTimeText ? escapeHtml(post.postTimeText) : new Date(post.postDate).toLocaleString('th-TH', {
         dateStyle: 'medium',
         timeStyle: 'short'
       });
 
-      const badgeLabel = post.isSamplePost ? '⚠️ ข้อมูลสาธิต' : '✅ โพสต์สดใหม่จาก Facebook';
+      const badgeLabel = post.isSamplePost ? '⚠️ ข้อมูลสาธิต' : '✅ โพสต์จริงจาก Facebook';
       const badgeStyle = post.isSamplePost ? 'background: rgba(245, 158, 11, 0.15); color: #fbbf24; border: 1px solid rgba(245, 158, 11, 0.3);' : 'background: rgba(16, 185, 129, 0.15); color: #34d399; border: 1px solid rgba(16, 185, 129, 0.3);';
 
       return `
@@ -770,7 +778,7 @@
                 <a href="${escapeHtml(post.authorUrl)}" target="_blank" class="author-name-link">
                   👤 ${escapeHtml(post.authorName)} ↗
                 </a>
-                <div class="post-timestamp">📅 ${formattedDate} • ห้องตั้งตี้หารค่าสมองกล</div>
+                <div class="post-timestamp">📅 เวลาโพสต์จริง: ${formattedDate} • ห้องตั้งตี้หารค่าสมองกล</div>
               </div>
             </div>
             <div style="display: flex; gap: 0.5rem; align-items: center; flex-wrap: wrap;">
@@ -919,7 +927,7 @@
       "กลุ่ม (Group)": "ห้องตั้งตี้หารค่าสมองกล (Google AI)",
       "ชื่อผู้โพสต์ (Author)": p.authorName,
       "ลิงก์โปรไฟล์ผู้โพสต์ (Profile URL)": p.authorUrl,
-      "วันที่ (Date)": p.postDate,
+      "เวลาโพสต์จริง (Real Post Time)": p.postTimeText || p.postDate,
       "ข้อความโพสต์ (Content)": p.content,
       "จำนวนคอมเมนต์": p.commentsCount,
       "ลิงก์โพสต์": p.postUrl
