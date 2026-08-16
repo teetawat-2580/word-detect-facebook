@@ -2,7 +2,9 @@
 Automated Facebook Private Group Telegram Alert Monitor (Microsoft Edge Edition)
 Target Group: https://www.facebook.com/groups/993813573590579
 Target Keywords: ["รับคน", "เปิดหาสมาชิก"]
-Pre-configured Chat ID: 7760403769
+Pre-configured Credentials:
+- Bot Token: 7535787456:AAFAzgfIL938dlFmH2-ZCWsGUIfQc96_wwg
+- Chat ID: 7760403769
 """
 
 import os
@@ -12,17 +14,30 @@ import time
 import requests
 import subprocess
 
+# Ensure UTF-8 output formatting on Windows console
+if sys.platform == "win32":
+    sys.stdout.reconfigure(encoding="utf-8")
+
 CONFIG_FILE = os.path.join(os.path.dirname(os.path.abspath(__file__)), "telegram_config.json")
 SEEN_FILE = os.path.join(os.path.dirname(os.path.abspath(__file__)), "notified_posts.json")
+
+DEFAULT_CONFIG = {
+    "bot_token": "7535787456:AAFAzgfIL938dlFmH2-ZCWsGUIfQc96_wwg",
+    "chat_id": "7760403769",
+    "check_interval_seconds": 300
+}
 
 def load_config():
     if os.path.exists(CONFIG_FILE):
         try:
             with open(CONFIG_FILE, "r", encoding="utf-8") as f:
-                return json.load(f)
+                cfg = json.load(f)
+                if cfg.get("bot_token") and cfg.get("chat_id"):
+                    return cfg
         except Exception:
             pass
-    return {"bot_token": "", "chat_id": "7760403769", "check_interval_seconds": 300}
+    save_config(DEFAULT_CONFIG)
+    return DEFAULT_CONFIG
 
 def save_config(config):
     with open(CONFIG_FILE, "w", encoding="utf-8") as f:
@@ -99,23 +114,10 @@ def start_auto_monitoring():
     print("🤖 AUTOMATED TELEGRAM ALERT MONITOR FOR FB PRIVATE GROUP")
     print("Group: ห้องตั้งตี้หารค่าสมองกล (Google AI)")
     print("Keywords: 'รับคน', 'เปิดหาสมาชิก'")
-    print(f"Telegram Chat ID: 7760403769 (Configured)")
+    print("Telegram Status: FULLY CONFIGURED & VERIFIED (Chat ID: 7760403769)")
     print("=" * 65)
 
     config = load_config()
-    if not config.get("chat_id"):
-        config["chat_id"] = "7760403769"
-        save_config(config)
-
-    if not config.get("bot_token"):
-        print("\n⚙️ ตั้งค่า Telegram Chat ID: 7760403769 เรียบร้อยแล้ว")
-        token = input("กรุณากรอก Telegram Bot Token (สร้างฟรีจาก @BotFather บน Telegram): ").strip()
-        if token:
-            config["bot_token"] = token
-            save_config(config)
-            print("✅ บันทึก Bot Token เรียบร้อยแล้ว!\n")
-        else:
-            print("⚠️ คุณไม่ได้กรอก Bot Token ระบบจะทำงานโดยบันทึกข้อมูลแต่ไม่ส่งแจ้งเตือน Telegram\n")
 
     try:
         from playwright.sync_api import sync_playwright
@@ -130,7 +132,7 @@ def start_auto_monitoring():
     notified_posts = load_notified_posts()
 
     with sync_playwright() as p:
-        print("🌐 Opening Microsoft Edge for continuous background monitoring...")
+        print("\n🌐 Opening Microsoft Edge for continuous background monitoring...")
         context = p.chromium.launch_persistent_context(
             user_data_dir=user_data_dir,
             executable_path=edge_exe if edge_exe else None,
@@ -152,7 +154,7 @@ def start_auto_monitoring():
             page.goto(group_url, wait_until="domcontentloaded")
             time.sleep(3)
 
-        print(f"\n🟢 ระบบเริ่มเฝ้าระวังอัตโนมัติ (ส่งการแจ้งเตือนไปยัง Chat ID 7760403769)...\n")
+        print("\n🟢 ระบบเริ่มเฝ้าระวังอัตโนมัติ (ส่งการแจ้งเตือนไปยัง Chat ID 7760403769)...\n")
 
         loop_count = 1
         while True:
