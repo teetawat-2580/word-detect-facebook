@@ -1,7 +1,7 @@
 /**
  * Facebook Private Group Word Search - Core Application Engine
  * Target Group: "ห้องตั้งตี้หารค่าสมองกล (Google AI)" (Group ID: 993813573590579)
- * Target Keyword: "รับคน"
+ * Target Keywords: "รับคน", "เปิดหาสมาชิก"
  */
 
 (function () {
@@ -12,8 +12,8 @@
     posts: [],
     filteredPosts: [],
     authors: new Set(),
-    searchQuery: 'รับคน', // Default target keyword
-    searchMode: 'exact', // 'exact', 'words', 'regex'
+    searchQuery: 'รับคน เปิดหาสมาชิก', // Default target keywords
+    searchMode: 'words', // 'words' mode matches any keyword
     caseSensitive: false,
     wholeWord: false,
     selectedAuthor: 'all',
@@ -30,12 +30,12 @@
   };
 
   // Minified 1-Click Bookmarklet Extractor Code
-  const BOOKMARKLET_CODE = `javascript:(async function(){const K="รับคน",V="https://word-detect-facebook.vercel.app/";window.scrollTo(0,0);await new Promise(r=>setTimeout(r,800));for(let i=1;i<=8;i++){window.scrollTo(0,document.body.scrollHeight);await new Promise(r=>setTimeout(r,1200));}const P=Array.from(document.querySelectorAll('[role="feed"] > div, [data-pagelet^="FeedUnit"], div[role="article"]')),res=[],seen=new Set();P.forEach((el,idx)=>{const T=Array.from(el.querySelectorAll('[dir="auto"]')).map(t=>t.textContent.trim()).filter(t=>t.length>10&&!t.includes('Comment')&&!t.includes('Share')).join('\\n')||el.textContent.trim();if(T.length>15&&!seen.has(T)){seen.add(T);const A=Array.from(el.querySelectorAll('a[href]'));let au='สมาชิกกลุ่มตั้งตี้หารค่าสมองกล',auUrl='',pUrl='';for(const a of A){const h=a.getAttribute('href')||'',txt=a.textContent.trim();if(!pUrl&&(h.includes('/posts/')||h.includes('/permalink/')||h.includes('pfbid')||h.includes('multi_permalinks=')))pUrl=h.startsWith('/')?'https://www.facebook.com'+h:h;if(!auUrl&&txt&&txt.length>1&&!txt.includes('Comment')&&!txt.includes('Share')&&!txt.includes('ห้องตั้งตี้')){if(h.includes('/user/')||h.includes('profile.php')||h.includes('/people/')||h.startsWith('/')){if(!h.includes('/groups/993813573590579?')){au=txt;auUrl=h.startsWith('/')?'https://www.facebook.com'+h:h;}}}}res.push({id:'bm_'+Date.now()+'_'+idx,authorName:au,authorUrl:auUrl||'https://www.facebook.com/groups/993813573590579',content:T,postDate:new Date().toISOString(),postUrl:pUrl||window.location.href,isSamplePost:false,isMatched:T.includes(K)});}});const payload={groupName:"ห้องตั้งตี้หารค่าสมองกล (Google AI)",groupId:"993813573590579",timestamp:new Date().toISOString(),posts:res};const target=V+'#data='+encodeURIComponent(JSON.stringify(payload));window.open(target,'_blank');})();`;
+  const BOOKMARKLET_CODE = `javascript:(async function(){const K=["รับคน","เปิดหาสมาชิก"],V="https://word-detect-facebook.vercel.app/";window.scrollTo(0,0);await new Promise(r=>setTimeout(r,800));for(let i=1;i<=8;i++){window.scrollTo(0,document.body.scrollHeight);await new Promise(r=>setTimeout(r,1200));}const P=Array.from(document.querySelectorAll('[role="feed"] > div, [data-pagelet^="FeedUnit"], div[role="article"]')),res=[],seen=new Set();P.forEach((el,idx)=>{const T=Array.from(el.querySelectorAll('[dir="auto"]')).map(t=>t.textContent.trim()).filter(t=>t.length>10&&!t.includes('Comment')&&!t.includes('Share')).join('\\n')||el.textContent.trim();if(T.length>15&&!seen.has(T)){seen.add(T);const A=Array.from(el.querySelectorAll('a[href]'));let au='สมาชิกกลุ่มตั้งตี้หารค่าสมองกล',auUrl='',pUrl='';for(const a of A){const h=a.getAttribute('href')||'',txt=a.textContent.trim();if(!pUrl&&(h.includes('/posts/')||h.includes('/permalink/')||h.includes('pfbid')||h.includes('multi_permalinks=')))pUrl=h.startsWith('/')?'https://www.facebook.com'+h:h;if(!auUrl&&txt&&txt.length>1&&!txt.includes('Comment')&&!txt.includes('Share')&&!txt.includes('ห้องตั้งตี้')){if(h.includes('/user/')||h.includes('profile.php')||h.includes('/people/')||h.startsWith('/')){if(!h.includes('/groups/993813573590579?')){au=txt;auUrl=h.startsWith('/')?'https://www.facebook.com'+h:h;}}}}res.push({id:'bm_'+Date.now()+'_'+idx,authorName:au,authorUrl:auUrl||'https://www.facebook.com/groups/993813573590579',content:T,postDate:new Date().toISOString(),postUrl:pUrl||window.location.href,isSamplePost:false,isMatched:K.some(k=>T.includes(k))});}});const payload={groupName:"ห้องตั้งตี้หารค่าสมองกล (Google AI)",groupId:"993813573590579",timestamp:new Date().toISOString(),posts:res};const target=V+'#data='+encodeURIComponent(JSON.stringify(payload));window.open(target,'_blank');})();`;
 
   // F12 Extractor Script String for 1-click clipboard copy
   const F12_EXTRACTOR_SCRIPT = `(async function autoExtractFBGroupF12() {
   console.log("🚀 Starting Facebook Group F12 Real Post Extractor...");
-  const TARGET_KEYWORD = "รับคน";
+  const TARGET_KEYWORDS = ["รับคน", "เปิดหาสมาชิก"];
   const VERCEL_URL = "https://word-detect-facebook.vercel.app/";
   window.scrollTo(0, 0);
   await new Promise(r => setTimeout(r, 1000));
@@ -101,7 +101,7 @@
         postDate: new Date().toISOString(),
         postUrl: postUrl,
         isSamplePost: false,
-        isMatched: fullText.includes(TARGET_KEYWORD)
+        isMatched: TARGET_KEYWORDS.some(kw => fullText.includes(kw))
       });
     }
   });
@@ -112,7 +112,7 @@
 
   try { await navigator.clipboard.writeText(JSON.stringify(payload)); } catch (e) {}
   window.open(targetAppUrl, "_blank");
-  alert(\`🎉 สกัดเรียบร้อย! ดึง \${extractedPosts.length} โพสต์จริงสำเร็จ พร้อมลิงก์โพสต์จริงและลิงก์โปรไฟล์จริง\\n\\nเปิดหน้าเว็บค้นหาแล้วครับ!\`);
+  alert(\`🎉 สกัดเรียบร้อย! ดึง \${extractedPosts.length} โพสต์สดใหม่สำเร็จ ("รับคน" / "เปิดหาสมาชิก")\\n\\nเปิดหน้าเว็บค้นหาแล้วครับ!\`);
 })();`;
 
   // DOM Cache
@@ -175,7 +175,7 @@
         if (parsed && parsed.posts && parsed.posts.length > 0) {
           loadDataset(parsed.posts, "ข้อมูลจริงจาก Facebook Auto-Extractor");
           loadedData = true;
-          showToast(`🎉 โหลด ${parsed.posts.length} โพสต์สดใหม่พร้อมลิงก์โปรไฟล์สำเร็จ!`, "success");
+          showToast(`🎉 โหลด ${parsed.posts.length} โพสต์สดใหม่สำเร็จ!`, "success");
           if (window.history && window.history.replaceState) {
             window.history.replaceState(null, "", window.location.pathname);
           }
@@ -886,7 +886,7 @@
   };
 
   function resetFilters() {
-    state.searchQuery = 'รับคน';
+    state.searchQuery = 'รับคน เปิดหาสมาชิก';
     state.selectedAuthor = 'all';
     state.startDate = '';
     state.endDate = '';
@@ -894,7 +894,7 @@
     state.linksOnly = false;
 
     if (DOM.searchInput) {
-      DOM.searchInput.value = 'รับคน';
+      DOM.searchInput.value = 'รับคน เปิดหาสมาชิก';
       if (DOM.searchClearBtn) DOM.searchClearBtn.style.display = 'block';
     }
     if (DOM.authorFilterSelect) DOM.authorFilterSelect.value = 'all';
@@ -904,7 +904,7 @@
     if (DOM.linksOnlyToggle) DOM.linksOnlyToggle.checked = false;
 
     applyFiltersAndRender();
-    showToast("รีเซ็ตตัวกรองแล้ว ค้นหาคำว่า 'รับคน' ตามเดิม", "success");
+    showToast("รีเซ็ตตัวกรองแล้ว ค้นหาคำว่า 'รับคน' และ 'เปิดหาสมาชิก' ตามเดิม", "success");
   }
 
   // Export Results to Excel / CSV
@@ -929,7 +929,7 @@
     const workbook = XLSX.utils.book_new();
     XLSX.utils.book_append_sheet(workbook, worksheet, "AI_Group_Search");
 
-    XLSX.writeFile(workbook, `FB_Group_ห้องตั้งตี้หารค่าสมองกล_Search_รับคน.xlsx`);
+    XLSX.writeFile(workbook, `FB_Group_ห้องตั้งตี้หารค่าสมองกล_Search.xlsx`);
     showToast(`ส่งออก ${rows.length} แถวไปยังไฟล์ Excel สำเร็จ!`, "success");
   }
 
