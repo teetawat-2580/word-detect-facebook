@@ -1,0 +1,257 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Facebook Private Group Word Search & Detector</title>
+  <meta name="description" content="Search for specific words, sentences, or regex patterns in Facebook Private Group posts and comments with visual keyword highlighting.">
+  
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@500;600;700;800&display=swap" rel="stylesheet">
+  
+  <!-- SheetJS CDN for Excel/CSV Parsing & Exporting -->
+  <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+
+  <!-- App Stylesheet -->
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+  <div id="app-root">
+    
+    <!-- Sidebar Controls -->
+    <aside class="app-sidebar" id="app-sidebar">
+      <div class="brand-header">
+        <div class="brand-icon">🔍</div>
+        <div>
+          <h1 class="brand-title">FB WordDetect</h1>
+          <span class="brand-badge">Private Group Pro</span>
+        </div>
+      </div>
+
+      <div class="sidebar-content">
+        
+        <!-- Search Engine Options -->
+        <div class="control-group">
+          <div class="sidebar-section-title">Search Configuration</div>
+          
+          <label class="control-label" for="search-mode-select">Match Strategy</label>
+          <select id="search-mode-select" class="select-field">
+            <option value="exact">Exact Phrase Match</option>
+            <option value="words">Any / All Keywords</option>
+            <option value="regex">Regular Expression (Regex)</option>
+          </select>
+        </div>
+
+        <div class="control-group">
+          <label class="toggle-item">
+            <span>Case Sensitive</span>
+            <label class="switch">
+              <input type="checkbox" id="case-sensitive-toggle">
+              <span class="slider"></span>
+            </label>
+          </label>
+
+          <label class="toggle-item">
+            <span>Whole Word Only</span>
+            <label class="switch">
+              <input type="checkbox" id="whole-word-toggle">
+              <span class="slider"></span>
+            </label>
+          </label>
+        </div>
+
+        <!-- Filter Controls -->
+        <div class="control-group">
+          <div class="sidebar-section-title">Filters</div>
+
+          <label class="control-label" for="author-filter-select">Author</label>
+          <select id="author-filter-select" class="select-field">
+            <option value="all">All Authors</option>
+          </select>
+        </div>
+
+        <div class="control-group">
+          <label class="control-label">Date Range</label>
+          <input type="date" id="start-date-input" class="input-field" placeholder="Start Date">
+          <input type="date" id="end-date-input" class="input-field" style="margin-top: 0.4rem;" placeholder="End Date">
+        </div>
+
+        <div class="control-group">
+          <label class="toggle-item">
+            <span>Posts with Comments</span>
+            <label class="switch">
+              <input type="checkbox" id="comments-only-toggle">
+              <span class="slider"></span>
+            </label>
+          </label>
+
+          <label class="toggle-item">
+            <span>Contains Links</span>
+            <label class="switch">
+              <input type="checkbox" id="links-only-toggle">
+              <span class="slider"></span>
+            </label>
+          </label>
+        </div>
+
+        <button id="reset-filters-btn" class="btn btn-secondary" style="width: 100%; margin-top: 0.5rem;">
+          🔄 Reset All Filters
+        </button>
+
+        <!-- Quick Guide Banner -->
+        <div style="background: rgba(24, 119, 242, 0.08); border: 1px dashed rgba(24, 119, 242, 0.3); border-radius: 12px; padding: 1rem; font-size: 0.82rem; color: #94a3b8;">
+          <strong style="color: #60a5fa;">💡 Private Group Tip:</strong><br>
+          Open your FB group in Chrome, press <kbd style="background: #1e293b; padding: 2px 5px; border-radius: 4px;">Ctrl+S</kbd> to save as HTML, then drag & drop it here!
+        </div>
+
+      </div>
+    </aside>
+
+    <!-- Main Content Area -->
+    <main class="app-main">
+      
+      <!-- Top Sticky Navbar -->
+      <header class="main-header">
+        <div class="search-box-container">
+          <div class="search-input-wrapper">
+            <span class="search-icon">🔍</span>
+            <input 
+              type="text" 
+              id="main-search-input" 
+              class="main-search-input" 
+              placeholder="Search word, phrase, or sentence in FB private group..." 
+              autocomplete="off"
+            >
+            <button id="search-clear-btn" class="search-clear-btn" title="Clear search">&times;</button>
+          </div>
+        </div>
+
+        <div class="header-actions">
+          <button id="import-modal-open-btn" class="btn btn-primary">
+            📥 Import Data
+          </button>
+          <button id="export-results-btn" class="btn btn-secondary">
+            📊 Export (.xlsx)
+          </button>
+        </div>
+      </header>
+
+      <div class="main-container">
+        
+        <!-- Overview Stats Grid -->
+        <section class="stats-grid">
+          <div class="stat-card">
+            <div class="stat-icon blue">📁</div>
+            <div class="stat-info">
+              <div class="stat-value" id="stat-total-posts">0</div>
+              <div class="stat-label">Total Group Posts</div>
+            </div>
+          </div>
+
+          <div class="stat-card">
+            <div class="stat-icon green">🎯</div>
+            <div class="stat-info">
+              <div class="stat-value" id="stat-matched-posts">0</div>
+              <div class="stat-label">Matched Search Results</div>
+            </div>
+          </div>
+
+          <div class="stat-card">
+            <div class="stat-icon purple">👥</div>
+            <div class="stat-info">
+              <div class="stat-value" id="stat-unique-authors">0</div>
+              <div class="stat-label">Unique Authors</div>
+            </div>
+          </div>
+
+          <div class="stat-card">
+            <div class="stat-icon amber">💬</div>
+            <div class="stat-info">
+              <div class="stat-value" id="stat-matched-comments">0</div>
+              <div class="stat-label">Matching Comments</div>
+            </div>
+          </div>
+        </section>
+
+        <!-- Active Filter Summary Pills -->
+        <div id="active-filters-bar" class="active-filters-bar" style="display: none;">
+          <span style="font-weight: 600; color: #94a3b8; margin-right: 0.5rem;">Active Filters:</span>
+          <div id="filter-pills-container" style="display: flex; gap: 0.5rem; flex-wrap: wrap;"></div>
+        </div>
+
+        <!-- Feed Container -->
+        <section class="feed-section">
+          <div class="feed-header" style="margin-bottom: 1rem;">
+            <h2 class="feed-title">
+              <span>Group Posts Feed</span>
+            </h2>
+          </div>
+
+          <div id="posts-feed-container" class="posts-list">
+            <!-- Dynamic Post Cards Render Here -->
+          </div>
+        </section>
+
+      </div>
+    </main>
+
+  </div>
+
+  <!-- Data Import Modal -->
+  <div id="import-modal" class="modal-overlay">
+    <div class="modal-card">
+      <div class="modal-header">
+        <h3 class="modal-title">Import Facebook Group Data</h3>
+        <button id="import-modal-close-btn" class="modal-close">&times;</button>
+      </div>
+      <div class="modal-body">
+        
+        <p style="font-size: 0.9rem; color: #94a3b8; margin-bottom: 1.25rem;">
+          Upload your saved Facebook Group HTML files, Excel sheets, CSV, or paste raw text below.
+        </p>
+
+        <!-- Dropzone -->
+        <div id="file-dropzone" class="dropzone-box">
+          <div class="dropzone-icon">📄</div>
+          <h4 style="font-family: var(--font-heading); margin-bottom: 0.25rem;">Drop files here or click to browse</h4>
+          <p style="font-size: 0.8rem; color: #64748b;">Supports .html, .htm, .xlsx, .csv, .json, .txt</p>
+          <input type="file" id="file-input" style="display: none;" multiple accept=".html,.htm,.xlsx,.csv,.json,.txt">
+        </div>
+
+        <div style="display: flex; align-items: center; margin: 1.5rem 0; gap: 1rem; color: #64748b; font-size: 0.85rem;">
+          <hr style="flex: 1; border: 0; border-top: 1px solid var(--border-glass);">
+          <span>OR PASTE RAW TEXT</span>
+          <hr style="flex: 1; border: 0; border-top: 1px solid var(--border-glass);">
+        </div>
+
+        <!-- Raw Text Paste Area -->
+        <div class="control-group">
+          <textarea id="raw-text-input" class="input-field" rows="4" placeholder="Paste raw copied Facebook posts here... (Separate posts with blank lines)"></textarea>
+          <button id="submit-raw-text-btn" class="btn btn-secondary" style="margin-top: 0.5rem;">Import Pasted Text</button>
+        </div>
+
+        <div style="display: flex; align-items: center; margin: 1.5rem 0; gap: 1rem; color: #64748b; font-size: 0.85rem;">
+          <hr style="flex: 1; border: 0; border-top: 1px solid var(--border-glass);">
+          <span>DEMO DATASET</span>
+          <hr style="flex: 1; border: 0; border-top: 1px solid var(--border-glass);">
+        </div>
+
+        <button id="load-sample-data-btn" class="btn btn-primary" style="width: 100%;">
+          🚀 Reset & Load Sample Facebook Private Group Dataset
+        </button>
+
+      </div>
+    </div>
+  </div>
+
+  <!-- Toast Notification Container -->
+  <div id="toast-container"></div>
+
+  <!-- App Scripts -->
+  <script src="sample_data.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>
