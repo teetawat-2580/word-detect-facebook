@@ -74,7 +74,7 @@
 
     // Load sample data if available
     if (window.SAMPLE_FB_GROUP_DATA && window.SAMPLE_FB_GROUP_DATA.posts) {
-      loadDataset(window.SAMPLE_FB_GROUP_DATA.posts, "ห้องตั้งตี้หารค่าสมองกล (Google AI)");
+      loadDataset(window.SAMPLE_FB_GROUP_DATA.posts, "ชุดข้อมูลตัวอย่าง (Demo Sample)");
     }
   }
 
@@ -203,9 +203,9 @@
     if (DOM.loadSampleDataBtn) {
       DOM.loadSampleDataBtn.addEventListener('click', () => {
         if (window.SAMPLE_FB_GROUP_DATA) {
-          loadDataset(window.SAMPLE_FB_GROUP_DATA.posts, "ห้องตั้งตี้หารค่าสมองกล (Google AI)");
+          loadDataset(window.SAMPLE_FB_GROUP_DATA.posts, "ชุดข้อมูลตัวอย่าง (Demo Sample)");
           closeModal(DOM.importModal);
-          showToast("โหลดข้อมูลกลุ่ม 'ห้องตั้งตี้หารค่าสมองกล (Google AI)' เรียบร้อยแล้ว!", "success");
+          showToast("โหลดชุดข้อมูลตัวอย่างเรียบร้อยแล้ว", "success");
         }
       });
     }
@@ -218,6 +218,8 @@
 
   // Load a new dataset
   function loadDataset(postsArray, sourceName = "Imported File") {
+    const isSampleSource = sourceName.includes("Demo") || sourceName.includes("Sample") || sourceName.includes("ตัวอย่าง");
+
     state.posts = postsArray.map((p, index) => ({
       id: p.id || `post_${Date.now()}_${index}`,
       authorName: p.authorName || p.author || 'สมาชิกกลุ่มตั้งตี้หารค่าสมองกล',
@@ -228,6 +230,7 @@
       reactionsCount: p.reactionsCount || p.likes || 0,
       commentsCount: (p.comments ? p.comments.length : (p.commentsCount || 0)),
       hasLinks: p.hasLinks || (p.content && p.content.includes('http')),
+      isSamplePost: p.isSamplePost || isSampleSource,
       comments: p.comments || []
     }));
 
@@ -295,11 +298,12 @@
             const txt = el.textContent.trim();
             if (txt.length > 25 && !txt.includes('Comment') && !txt.includes('Like')) {
               extractedPosts.push({
-                id: `html_p_${idCounter++}`,
-                authorName: 'สมาชิกกลุ่มตั้งตี้หารค่าสมองกล',
+                id: `real_html_${idCounter++}`,
+                authorName: 'สมาชิกกลุ่มตั้งตี้หารค่าสมองกล (จากไฟล์จริง)',
                 content: txt,
                 postDate: new Date().toISOString(),
                 postUrl: 'https://www.facebook.com/groups/993813573590579',
+                isSamplePost: false,
                 comments: []
               });
             }
@@ -314,11 +318,12 @@
 
             if (content.length > 15) {
               extractedPosts.push({
-                id: `html_fb_${idCounter++}`,
+                id: `real_fb_${idCounter++}`,
                 authorName: authorName,
                 content: content,
                 postDate: new Date().toISOString(),
                 postUrl: 'https://www.facebook.com/groups/993813573590579',
+                isSamplePost: false,
                 comments: []
               });
             }
@@ -326,7 +331,7 @@
         }
 
         if (extractedPosts.length > 0) {
-          loadDataset(extractedPosts, file.name);
+          loadDataset(extractedPosts, `ไฟล์จริง: ${file.name}`);
         } else {
           showToast(`ไม่พบข้อมูลโพสต์ในไฟล์ ${file.name}`, 'warning');
         }
@@ -366,11 +371,12 @@
             content: contentKey ? String(row[contentKey]) : '',
             postDate: dateKey ? String(row[dateKey]) : new Date().toISOString(),
             postUrl: urlKey ? String(row[urlKey]) : 'https://www.facebook.com/groups/993813573590579',
+            isSamplePost: false,
             comments: []
           };
         }).filter(p => p.content.trim().length > 0);
 
-        loadDataset(extractedPosts, file.name);
+        loadDataset(extractedPosts, `ไฟล์จริง: ${file.name}`);
       } catch (err) {
         showToast(`อ่านไฟล์ Excel/CSV ล้มเหลว: ${err.message}`, 'danger');
       }
@@ -385,7 +391,7 @@
       try {
         const json = JSON.parse(e.target.result);
         const postsArray = Array.isArray(json) ? json : (json.posts || [json]);
-        loadDataset(postsArray, file.name);
+        loadDataset(postsArray, `ไฟล์นำเข้า: ${file.name}`);
       } catch (err) {
         showToast(`รูปแบบไฟล์ JSON ไม่ถูกต้อง: ${err.message}`, 'danger');
       }
@@ -408,7 +414,7 @@
       showToast("กรุณากรอกหรือวางข้อความโพสต์ก่อนนำเข้า", "warning");
       return;
     }
-    parseRawTextString(text, "ข้อความที่วาง");
+    parseRawTextString(text, "ข้อความที่วางจริง");
     DOM.rawTextInput.value = '';
     closeModal(DOM.importModal);
   }
@@ -417,10 +423,11 @@
     const paragraphs = text.split(/\n\s*\n/).filter(p => p.trim().length > 5);
     const posts = paragraphs.map((p, idx) => ({
       id: `raw_${idx}`,
-      authorName: 'ข้อความที่คัดลอกมา',
+      authorName: 'ข้อความจริงที่คัดลอกมา',
       content: p.trim(),
       postDate: new Date().toISOString(),
       postUrl: 'https://www.facebook.com/groups/993813573590579',
+      isSamplePost: false,
       comments: []
     }));
     loadDataset(posts, sourceName);
@@ -538,7 +545,7 @@
         <div class="empty-state">
           <div class="empty-icon">🔍</div>
           <h3 class="empty-title">ไม่พบโพสต์ที่ตรงกับคำค้นหา "${escapeHtml(state.searchQuery)}"</h3>
-          <p class="empty-desc">ลองเปลี่ยนคำค้นหา หรือกดล้างตัวกรองทั้งหมดเพื่อแสดงโพสต์ทั้งหมดในกลุ่มห้องตั้งตี้หารค่าสมองกล (Google AI)</p>
+          <p class="empty-desc">ลองเปลี่ยนคำค้นหา หรือกดปุ่ม "📥 นำเข้าข้อมูล" เพื่อนำเข้าไฟล์ HTML จากหน้ากลุ่มจริงของคุณ</p>
           <button class="btn btn-secondary" onclick="document.getElementById('reset-filters-btn').click()">ล้างตัวกรองทั้งหมด</button>
         </div>
       `;
@@ -578,6 +585,9 @@
         timeStyle: 'short'
       });
 
+      const badgeLabel = post.isSamplePost ? '⚠️ ข้อมูลสาธิต (Sample Data)' : '✅ ข้อมูลโพสต์จริง';
+      const badgeStyle = post.isSamplePost ? 'background: rgba(245, 158, 11, 0.15); color: #fbbf24; border: 1px solid rgba(245, 158, 11, 0.3);' : 'background: rgba(16, 185, 129, 0.15); color: #34d399; border: 1px solid rgba(16, 185, 129, 0.3);';
+
       return `
         <article class="post-card ${query ? 'highlighted-card' : ''}">
           <header class="post-header">
@@ -585,12 +595,15 @@
               <img class="author-avatar" src="${escapeHtml(post.authorAvatar)}" alt="${escapeHtml(post.authorName)}" onerror="this.src='https://ui-avatars.com/api/?name=${encodeURIComponent(post.authorName)}&background=1877F2&color=fff'">
               <div>
                 <div class="author-name">${escapeHtml(post.authorName)}</div>
-                <div class="post-timestamp">📅 ${formattedDate} • ห้องตั้งตี้หารค่าสมองกล (Google AI)</div>
+                <div class="post-timestamp">📅 ${formattedDate} • ห้องตั้งตี้หารค่าสมองกล</div>
               </div>
             </div>
-            <a href="${escapeHtml(post.postUrl)}" target="_blank" class="post-badge" style="text-decoration: none;">
-              🔗 เปิดใน Facebook ↗
-            </a>
+            <div style="display: flex; gap: 0.5rem; align-items: center;">
+              <span class="post-badge" style="${badgeStyle}">${badgeLabel}</span>
+              <a href="${escapeHtml(post.postUrl)}" target="_blank" class="post-badge" style="text-decoration: none;">
+                🔗 เปิดใน Facebook ↗
+              </a>
+            </div>
           </header>
 
           <div class="post-body">${highlightedContent}</div>
@@ -724,6 +737,7 @@
     }
 
     const rows = state.filteredPosts.map(p => ({
+      "ประเภท": p.isSamplePost ? "ข้อมูลสาธิต" : "โพสต์จริง",
       "กลุ่ม (Group)": "ห้องตั้งตี้หารค่าสมองกล (Google AI)",
       "URL กลุ่ม": "https://www.facebook.com/groups/993813573590579",
       "ผู้โพสต์ (Author)": p.authorName,

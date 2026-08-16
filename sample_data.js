@@ -1,8 +1,7 @@
 /**
- * Sample dataset specifically tailored for Facebook Private Group:
- * Group Name: "ห้องตั้งตี้หารค่าสมองกล (Google AI)"
- * Group URL: https://www.facebook.com/groups/993813573590579
- * Default Search Keyword: "รับคน"
+ * Demo Sample Dataset for Facebook Private Group: "ห้องตั้งตี้หารค่าสมองกล (Google AI)"
+ * Note: These are simulated sample posts for demonstration purposes.
+ * To search REAL live posts from your private group, save the group page (Ctrl+S) and drag the .html file into "Import Data"!
  */
 
 window.SAMPLE_FB_GROUP_DATA = {
@@ -10,17 +9,19 @@ window.SAMPLE_FB_GROUP_DATA = {
   groupId: "993813573590579",
   groupUrl: "https://www.facebook.com/groups/993813573590579",
   exportDate: "2026-08-17T04:00:00Z",
+  isSample: true,
   posts: [
     {
       id: "post_ai_01",
-      authorName: "Kitti TechDev",
+      authorName: "Kitti TechDev (Sample)",
       authorAvatar: "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=100&auto=format&fit=crop&q=80",
       postDate: "2026-08-16T20:15:00Z",
-      postUrl: "https://www.facebook.com/groups/993813573590579/posts/10101",
-      content: "ตั้งตี้ด่วน! รับคนหาร Google One AI Premium (Gemini Advanced 2TB) ว่างอีก 2 ที่ครับ ตกเดือนละ 175 บาท จ่ายเป็นรายปีหรือราย 3 เดือนก็ได้ ใช้งานผ่านการเชิญ Family Share บัญชีส่วนตัวปลอดภัย 100% ใครสนใจรับคนเข้าตี้ทัก DM มาได้เลยครับ",
+      postUrl: "https://www.facebook.com/groups/993813573590579",
+      content: "[ตัวอย่างโพสต์สาธิต] ตั้งตี้ด่วน! รับคนหาร Google One AI Premium (Gemini Advanced 2TB) ว่างอีก 2 ที่ครับ ตกเดือนละ 175 บาท ใช้งานผ่านการเชิญ Family Share ใครสนใจรับคนเข้าตี้ทัก DM มาได้เลยครับ",
       reactionsCount: 54,
-      commentsCount: 14,
+      commentsCount: 3,
       hasLinks: false,
+      isSamplePost: true,
       comments: [
         {
           id: "c_ai_01_1",
@@ -33,25 +34,20 @@ window.SAMPLE_FB_GROUP_DATA = {
           authorName: "Kitti TechDev",
           date: "2026-08-16T20:30:00Z",
           text: "ตอบแชทแล้วครับ เหลืออีก 1 ที่สุดท้ายครับ!"
-        },
-        {
-          id: "c_ai_01_3",
-          authorName: "Nutcha S.",
-          date: "2026-08-16T20:45:00Z",
-          text: "ถ้ามีใครหลุดจอง ขอต่อคิวด้วยคนนะคะ"
         }
       ]
     },
     {
       id: "post_ai_02",
-      authorName: "Pariya AI Creator",
+      authorName: "Pariya AI Creator (Sample)",
       authorAvatar: "https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=100&auto=format&fit=crop&q=80",
       postDate: "2026-08-16T15:40:00Z",
-      postUrl: "https://www.facebook.com/groups/993813573590579/posts/10102",
-      content: "รับคนหารค่าสมองกล ChatGPT Plus + Claude 3.5 Sonnet รวมตี้สายเขียนโค้ดและเจนรูป Midjourney ว่าง 1 ที่ครับ หารสล็อตใช้งานเป็นกันเอง ไม่ดึงตี้หนี มีกลุ่มไลน์อัปเดตสถานะตลอด ใครพร้อมหารทักแชทครับ",
+      postUrl: "https://www.facebook.com/groups/993813573590579",
+      content: "[ตัวอย่างโพสต์สาธิต] รับคนหารค่าสมองกล ChatGPT Plus + Claude 3.5 Sonnet รวมตี้สายเขียนโค้ดและเจนรูป Midjourney ว่าง 1 ที่ครับ ใครพร้อมหารทักแชทครับ",
       reactionsCount: 72,
-      commentsCount: 18,
+      commentsCount: 1,
       hasLinks: true,
+      isSamplePost: true,
       comments: [
         {
           id: "c_ai_02_1",
@@ -63,58 +59,21 @@ window.SAMPLE_FB_GROUP_DATA = {
     },
     {
       id: "post_ai_03",
-      authorName: "Somchai Cloud",
+      authorName: "Somchai Cloud (Sample)",
       authorAvatar: "https://images.unsplash.com/photo-1570295999919-56ceb5ecca61?w=100&auto=format&fit=crop&q=80",
       postDate: "2026-08-15T12:10:00Z",
-      postUrl: "https://www.facebook.com/groups/993813573590579/posts/10103",
-      content: "หาคนตั้งตี้รับคนหาร Google AI Studio / Vertex AI API Credits รวมกลุ่มนักพัฒนาที่ใช้ LLM สมองกลสร้างแอป หารค่า API รายเดือนเฉลี่ยถูกลงกว่าเดิม สนใจเข้ากลุ่มตี้ทักแชทมาครับ",
+      postUrl: "https://www.facebook.com/groups/993813573590579",
+      content: "[ตัวอย่างโพสต์สาธิต] หาคนตั้งตี้รับคนหาร Google AI Studio / Vertex AI API Credits รวมกลุ่มนักพัฒนาที่ใช้ LLM สมองกลสร้างแอป สนใจเข้ากลุ่มตี้ทักแชทมาครับ",
       reactionsCount: 38,
-      commentsCount: 9,
+      commentsCount: 1,
       hasLinks: false,
+      isSamplePost: true,
       comments: [
         {
           id: "c_ai_03_1",
           authorName: "Ananda Dev",
           date: "2026-08-15T12:40:00Z",
           text: "สนใจร่วมตี้ครับ สายยิง API โค้ด Python อยู่พอดี"
-        }
-      ]
-    },
-    {
-      id: "post_ai_04",
-      authorName: "Nisha Prompter",
-      authorAvatar: "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=100&auto=format&fit=crop&q=80",
-      postDate: "2026-08-14T19:00:00Z",
-      postUrl: "https://www.facebook.com/groups/993813573590579/posts/10104",
-      content: "เปิดตี้ใหม่! รับคนหาร Perplexity Pro + Cursor AI Pro สำหรับสายเขียนโค้ดอัตโนมัติ เหลือ 2 สล็อตสุดท้าย ตกเดือนละไม่ถึง 200 บาท ใช้งานยาวๆ สนใจรับคนเข้าตี้ทักด่วน!",
-      reactionsCount: 65,
-      commentsCount: 11,
-      hasLinks: false,
-      comments: [
-        {
-          id: "c_ai_04_1",
-          authorName: "Sombat Code",
-          date: "2026-08-14T19:25:00Z",
-          text: "ขอหาร Cursor AI Pro ครับ ทักแชทไปแล้วครับ"
-        }
-      ]
-    },
-    {
-      id: "post_ai_05",
-      authorName: "Admin AI Party",
-      authorAvatar: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=100&auto=format&fit=crop&q=80",
-      postDate: "2026-08-13T10:00:00Z",
-      postUrl: "https://www.facebook.com/groups/993813573590579/posts/10105",
-      content: "ประกาศกฎกลุ่ม 'ห้องตั้งตี้หารค่าสมองกล (Google AI)': การรับคนหารค่าสมัครสมาชิก AI ทุกชนิด กรุณาใช้บัญชีจริงและตรวจสอบประวัติผู้ร่วมตี้ทุกครั้งเพื่อความปลอดภัยนะครับ!",
-      reactionsCount: 150,
-      commentsCount: 30,
-      hasLinks: false,
-      comments: [
-        {
-          id: "c_ai_05_1",
-          authorName: "Kitti TechDev",
-          date: "2026-08-13T10:30:00Z",
-          text: "ขอบคุณแอดมินครับ กลุ่มนี้ระวังเกรียนได้ดีมาก"
         }
       ]
     }
