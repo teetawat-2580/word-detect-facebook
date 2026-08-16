@@ -2,6 +2,8 @@
  * Facebook Private Group Word Search - Core Application Engine
  * Target Group: "ห้องตั้งตี้หารค่าสมองกล (Google AI)" (Group ID: 993813573590579)
  * Target Keywords: "รับคน", "เปิดหาสมาชิก"
+ * Telegram Bot Token: 7535787456:AAFAzgfIL938dlFmH2-ZCWsGUIfQc96_wwg
+ * Telegram Chat ID: 7760403769
  */
 
 (function () {
@@ -29,14 +31,20 @@
     }
   };
 
-  // Minified 1-Click Bookmarklet Extractor Code
-  const BOOKMARKLET_CODE = `javascript:(async function(){const K=["รับคน","เปิดหาสมาชิก"],V="https://word-detect-facebook.vercel.app/";window.scrollTo(0,0);await new Promise(r=>setTimeout(r,800));for(let i=1;i<=8;i++){window.scrollTo(0,document.body.scrollHeight);await new Promise(r=>setTimeout(r,1200));}const P=Array.from(document.querySelectorAll('[role="feed"] > div, [data-pagelet^="FeedUnit"], div[role="article"]')),res=[],seen=new Set();P.forEach((el,idx)=>{const T=Array.from(el.querySelectorAll('[dir="auto"]')).map(t=>t.textContent.trim()).filter(t=>t.length>10&&!t.includes('Comment')&&!t.includes('Share')).join('\\n')||el.textContent.trim();if(T.length>15&&!seen.has(T)){seen.add(T);let realPostTime='';const timeEl=el.querySelector('time')||el.querySelector('abbr')||el.querySelector('a[href*="/posts/"] span, a[href*="pfbid"] span');if(timeEl)realPostTime=timeEl.getAttribute('title')||timeEl.getAttribute('aria-label')||timeEl.textContent.trim();const A=Array.from(el.querySelectorAll('a[href]'));let au='สมาชิกกลุ่มตั้งตี้หารค่าสมองกล',auUrl='',pUrl='';for(const a of A){const h=a.getAttribute('href')||'',txt=a.textContent.trim();if(!pUrl&&(h.includes('/posts/')||h.includes('/permalink/')||h.includes('pfbid')||h.includes('multi_permalinks=')))pUrl=h.startsWith('/')?'https://www.facebook.com'+h:h;if(!auUrl&&txt&&txt.length>1&&!txt.includes('Comment')&&!txt.includes('Share')&&!txt.includes('ห้องตั้งตี้')){if(h.includes('/user/')||h.includes('profile.php')||h.includes('/people/')||h.startsWith('/')){if(!h.includes('/groups/993813573590579?')){au=txt;auUrl=h.startsWith('/')?'https://www.facebook.com'+h:h;}}}}res.push({id:'bm_'+Date.now()+'_'+idx,authorName:au,authorUrl:auUrl||'https://www.facebook.com/groups/993813573590579',content:T,postDate:realPostTime||new Date().toISOString(),postTimeText:realPostTime||'',postUrl:pUrl||window.location.href,isSamplePost:false,isMatched:K.some(k=>T.includes(k))});}});const payload={groupName:"ห้องตั้งตี้หารค่าสมองกล (Google AI)",groupId:"993813573590579",timestamp:new Date().toISOString(),posts:res};const target=V+'#data='+encodeURIComponent(JSON.stringify(payload));window.open(target,'_blank');})();`;
+  const BOT_TOKEN = "7535787456:AAFAzgfIL938dlFmH2-ZCWsGUIfQc96_wwg";
+  const CHAT_ID = "7760403769";
+
+  // Minified 1-Click Bookmarklet Extractor Code with Telegram Alert Integration
+  const BOOKMARKLET_CODE = `javascript:(async function(){const K=["รับคน","เปิดหาสมาชิก"],T="7535787456:AAFAzgfIL938dlFmH2-ZCWsGUIfQc96_wwg",C="7760403769",V="https://word-detect-facebook.vercel.app/";window.scrollTo(0,0);await new Promise(r=>setTimeout(r,800));for(let i=1;i<=8;i++){window.scrollTo(0,document.body.scrollHeight);await new Promise(r=>setTimeout(r,1200));}const P=Array.from(document.querySelectorAll('[role="feed"] > div, [data-pagelet^="FeedUnit"], div[role="article"]')),res=[],matched=[],seen=new Set();P.forEach((el,idx)=>{const textEls=el.querySelectorAll('[dir="auto"]');let txt='';textEls.forEach(t=>{const s=t.textContent.trim();if(s.length>10&&!s.includes('Comment')&&!s.includes('Share'))if(!txt.includes(s))txt+=(txt?'\\n':'')+s;});if(!txt)txt=el.textContent.trim();if(txt.length>15&&!seen.has(txt)){seen.add(txt);let realTime='';const tEl=el.querySelector('time')||el.querySelector('abbr')||el.querySelector('a[href*="/posts/"] span, a[href*="pfbid"] span');if(tEl)realTime=tEl.getAttribute('title')||tEl.getAttribute('aria-label')||tEl.textContent.trim();const A=Array.from(el.querySelectorAll('a[href]'));let au='สมาชิกกลุ่มตั้งตี้หารค่าสมองกล',auUrl='',pUrl='';for(const a of A){const h=a.getAttribute('href')||'',t=a.textContent.trim();if(!pUrl&&(h.includes('/posts/')||h.includes('/permalink/')||h.includes('pfbid')||h.includes('multi_permalinks=')))pUrl=h.startsWith('/')?'https://www.facebook.com'+h:h;if(!auUrl&&t&&t.length>1&&!t.includes('Comment')&&!t.includes('Share')&&!t.includes('ห้องตั้งตี้')){if(h.includes('/user/')||h.includes('profile.php')||h.includes('/people/')||h.startsWith('/')){if(!h.includes('/groups/993813573590579?')){au=t;auUrl=h.startsWith('/')?'https://www.facebook.com'+h:h;}}}}const isM=K.some(k=>txt.includes(k));const obj={id:'bm_'+Date.now()+'_'+idx,authorName:au,authorUrl:auUrl||'https://www.facebook.com/groups/993813573590579',content:txt,postDate:realTime||new Date().toISOString(),postTimeText:realTime||'',postUrl:pUrl||window.location.href,isSamplePost:false,isMatched:isM};res.push(obj);if(isM)matched.push(obj);}});for(const p of matched){const msg='🚨 <b>พบโพสต์ตั้งตี้หารค่าสมองกลใหม่!</b>\\nคีย์เวิร์ด: <code>"รับคน" / "เปิดหาสมาชิก"</code>\\n\\n👤 <b>ผู้โพสต์:</b> <a href="'+p.authorUrl+'">'+p.authorName+'</a>\\n📅 <b>เวลาโพสต์จริง:</b> '+(p.postTimeText||'ไม่ระบุเวลา')+'\\n\\n📝 <b>ข้อความ:</b>\\n'+p.content.substring(0,250)+'\\n\\n🔗 <a href="'+p.postUrl+'"><b>เปิดดูโพสต์จริง ↗</b></a>';try{await fetch('https://api.telegram.org/bot'+T+'/sendMessage',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({chat_id:C,text:msg,parse_mode:'HTML'})});}catch(e){}}const payload={groupName:"ห้องตั้งตี้หารค่าสมองกล (Google AI)",groupId:"993813573590579",timestamp:new Date().toISOString(),posts:res};window.open(V+'#data='+encodeURIComponent(JSON.stringify(payload)),'_blank');})();`;
 
   // F12 Extractor Script String for 1-click clipboard copy
-  const F12_EXTRACTOR_SCRIPT = `(async function autoExtractFBGroupF12() {
-  console.log("🚀 Starting Facebook Group F12 Real Post Extractor...");
+  const F12_EXTRACTOR_SCRIPT = `(async function autoExtractFBGroupF12Telegram() {
+  console.log("🚀 Starting Facebook Group F12 Extractor with Direct Telegram Alerts...");
+  const BOT_TOKEN = "${BOT_TOKEN}";
+  const CHAT_ID = "${CHAT_ID}";
   const TARGET_KEYWORDS = ["รับคน", "เปิดหาสมาชิก"];
   const VERCEL_URL = "https://word-detect-facebook.vercel.app/";
+
   window.scrollTo(0, 0);
   await new Promise(r => setTimeout(r, 1000));
   const SCROLL_COUNT = 8;
@@ -51,6 +59,7 @@
 
   const postElements = Array.from(document.querySelectorAll('[role="feed"] > div, [data-pagelet^="FeedUnit"], div[role="article"]'));
   const extractedPosts = [];
+  const matchedPosts = [];
   const seenText = new Set();
 
   postElements.forEach((el, index) => {
@@ -98,7 +107,8 @@
       if (!postUrl) postUrl = window.location.href;
       if (!authorUrl) authorUrl = 'https://www.facebook.com/groups/993813573590579';
 
-      extractedPosts.push({
+      const isMatched = TARGET_KEYWORDS.some(kw => fullText.includes(kw));
+      const postObj = {
         id: \`f12_real_\${Date.now()}_\${index}\`,
         authorName: authorName,
         authorUrl: authorUrl,
@@ -107,18 +117,40 @@
         postTimeText: realPostTime || '',
         postUrl: postUrl,
         isSamplePost: false,
-        isMatched: TARGET_KEYWORDS.some(kw => fullText.includes(kw))
-      });
+        isMatched: isMatched
+      };
+
+      extractedPosts.push(postObj);
+      if (isMatched) matchedPosts.push(postObj);
     }
   });
 
+  let sentTelegramCount = 0;
+  for (const p of matchedPosts) {
+    const shortContent = p.content.substring(0, 300) + (p.content.length > 300 ? '...' : '');
+    const msg = \`🚨 <b>พบโพสต์ตั้งตี้หารค่าสมองกลใหม่!</b>\\n\` +
+                \`คีย์เวิร์ด: <code>"รับคน" / "เปิดหาสมาชิก"</code>\\n\\n\` +
+                \`👤 <b>ผู้โพสต์:</b> <a href="\${p.authorUrl}">\${p.authorName}</a>\\n\` +
+                \`📅 <b>เวลาโพสต์จริง:</b> \${p.postTimeText || 'ไม่ระบุเวลา'}\\n\\n\` +
+                \`📝 <b>ข้อความโพสต์:</b>\\n\${shortContent}\\n\\n\` +
+                \`🔗 <a href="\${p.postUrl}"><b>เปิดดูโพสต์จริงบน Facebook ↗</b></a>\\n\` +
+                \`👤 <a href="\${p.authorUrl}"><b>ดูโปรไฟล์ผู้โพสต์ ↗</b></a>\`;
+
+    try {
+      const resp = await fetch(\`https://api.telegram.org/bot\${BOT_TOKEN}/sendMessage\`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ chat_id: CHAT_ID, text: msg, parse_mode: 'HTML', disable_web_page_preview: false })
+      });
+      if (resp.ok) sentTelegramCount++;
+    } catch (err) {}
+  }
+
   const payload = { groupName: "ห้องตั้งตี้หารค่าสมองกล (Google AI)", groupId: "993813573590579", timestamp: new Date().toISOString(), posts: extractedPosts };
   const encodedPayload = encodeURIComponent(JSON.stringify(payload));
-  const targetAppUrl = \`\${VERCEL_URL}#data=\${encodedPayload}\`;
+  window.open(\`\${VERCEL_URL}#data=\${encodedPayload}\`, "_blank");
 
-  try { await navigator.clipboard.writeText(JSON.stringify(payload)); } catch (e) {}
-  window.open(targetAppUrl, "_blank");
-  alert(\`🎉 สกัดเรียบร้อย! ดึง \${extractedPosts.length} โพสต์สดใหม่สำเร็จ พร้อมเวลาโพสต์จริง!\\n\\nเปิดหน้าเว็บค้นหาแล้วครับ!\`);
+  alert(\`🎉 สกัดเรียบร้อย!\\n\\n- ดึงโพสต์สดใหม่ได้ \${extractedPosts.length} โพสต์\\n- พบคีย์เวิร์ด \${matchedPosts.length} โพสต์\\n- ส่งแจ้งเตือนไปยัง Telegram สำเร็จ \${sentTelegramCount} โพสต์!\`);
 })();`;
 
   // DOM Cache
@@ -240,7 +272,7 @@
       DOM.copyF12ScriptBtn.addEventListener('click', async () => {
         try {
           await navigator.clipboard.writeText(F12_EXTRACTOR_SCRIPT);
-          showToast("📋 คัดลอกสคริปต์ F12 เรียบร้อย! เปิดหน้า Facebook กด F12 แล้ววางได้ทันที", "success");
+          showToast("📋 คัดลอกสคริปต์ F12 + Telegram Notification เรียบร้อย! เปิดหน้า Facebook กด F12 แล้ววางได้ทันที", "success");
         } catch (e) {
           showToast("คัดลอกไม่สำเร็จ กรุณาคัดลอกไฟล์ fb_auto_extractor.js", "warning");
         }
@@ -758,7 +790,6 @@
         `;
       }
 
-      // Display Real Post Time Text if present, otherwise format timestamp
       const formattedDate = post.postTimeText ? escapeHtml(post.postTimeText) : new Date(post.postDate).toLocaleString('th-TH', {
         dateStyle: 'medium',
         timeStyle: 'short'
