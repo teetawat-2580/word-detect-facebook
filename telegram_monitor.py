@@ -2,9 +2,7 @@
 Automated Facebook Private Group Telegram Alert Monitor (Microsoft Edge Edition)
 Target Group: https://www.facebook.com/groups/993813573590579
 Target Keywords: ["รับคน", "เปิดหาสมาชิก"]
-
-This script automatically runs in the background, checks for new posts every 5 minutes,
-and sends INSTANT TELEGRAM NOTIFICATIONS to your phone/desktop when target words are found!
+Pre-configured Chat ID: 7760403769
 """
 
 import os
@@ -24,7 +22,7 @@ def load_config():
                 return json.load(f)
         except Exception:
             pass
-    return {"bot_token": "", "chat_id": "", "check_interval_seconds": 300}
+    return {"bot_token": "", "chat_id": "7760403769", "check_interval_seconds": 300}
 
 def save_config(config):
     with open(CONFIG_FILE, "w", encoding="utf-8") as f:
@@ -45,7 +43,7 @@ def save_notified_posts(seen_set):
 
 def send_telegram_alert(bot_token, chat_id, post):
     if not bot_token or not chat_id:
-        print("⚠️ Telegram Credentials missing. Skipping Telegram notification.")
+        print("⚠️ Telegram credentials missing. Skipping Telegram notification.")
         return False
 
     author_name = post.get("authorName", "สมาชิกกลุ่มตั้งตี้หารค่าสมองกล")
@@ -54,7 +52,6 @@ def send_telegram_alert(bot_token, chat_id, post):
     post_url = post.get("postUrl", "https://www.facebook.com/groups/993813573590579")
     content = post.get("content", "")
 
-    # Truncate long content for readable Telegram message
     short_content = content[:350] + ("..." if len(content) > 350 else "")
 
     message_text = (
@@ -78,7 +75,7 @@ def send_telegram_alert(bot_token, chat_id, post):
     try:
         res = requests.post(url, json=payload, timeout=10)
         if res.status_code == 200:
-            print(f"✅ ส่งการแจ้งเตือน Telegram สำเร็จสำหรับโพสต์ของ: {author_name}")
+            print(f"✅ ส่งการแจ้งเตือน Telegram สำเร็จ ไปยัง Chat ID {chat_id} สำหรับโพสต์ของ: {author_name}")
             return True
         else:
             print(f"❌ Telegram API Error: {res.status_code} - {res.text}")
@@ -102,26 +99,28 @@ def start_auto_monitoring():
     print("🤖 AUTOMATED TELEGRAM ALERT MONITOR FOR FB PRIVATE GROUP")
     print("Group: ห้องตั้งตี้หารค่าสมองกล (Google AI)")
     print("Keywords: 'รับคน', 'เปิดหาสมาชิก'")
+    print(f"Telegram Chat ID: 7760403769 (Configured)")
     print("=" * 65)
 
     config = load_config()
-    
-    if not config.get("bot_token") or not config.get("chat_id"):
-        print("\n⚙️ กรุณาตั้งค่า Telegram Bot เพื่อรับการแจ้งเตือนอัตโนมัติ:")
-        token = input("กรอก Telegram Bot Token (จาก @BotFather): ").strip()
-        chat_id = input("กรอก Telegram Chat ID (จาก @userinfobot): ").strip()
-        if token and chat_id:
+    if not config.get("chat_id"):
+        config["chat_id"] = "7760403769"
+        save_config(config)
+
+    if not config.get("bot_token"):
+        print("\n⚙️ ตั้งค่า Telegram Chat ID: 7760403769 เรียบร้อยแล้ว")
+        token = input("กรุณากรอก Telegram Bot Token (สร้างฟรีจาก @BotFather บน Telegram): ").strip()
+        if token:
             config["bot_token"] = token
-            config["chat_id"] = chat_id
             save_config(config)
-            print("✅ บันทึกการตั้งค่า Telegram เรียบร้อยแล้ว!\n")
+            print("✅ บันทึก Bot Token เรียบร้อยแล้ว!\n")
         else:
-            print("⚠️ คุณไม่ได้กรอก Telegram credentials ระบบจะทำงานโดยบันทึกข้อมูลแต่ไม่ส่งแจ้งเตือน Telegram\n")
+            print("⚠️ คุณไม่ได้กรอก Bot Token ระบบจะทำงานโดยบันทึกข้อมูลแต่ไม่ส่งแจ้งเตือน Telegram\n")
 
     try:
         from playwright.sync_api import sync_playwright
     except ImportError:
-        print("Installing playwright...")
+        print("Installing playwright & requests...")
         subprocess.run([sys.executable, "-m", "pip", "install", "playwright", "requests"], check=True)
         from playwright.sync_api import sync_playwright
 
@@ -153,7 +152,7 @@ def start_auto_monitoring():
             page.goto(group_url, wait_until="domcontentloaded")
             time.sleep(3)
 
-        print("\n🟢 ระบบเริ่มทำงานเฝ้าระวังโพสต์ใหม่ทุกๆ 5 นาที (กด Ctrl+C เพื่อหยุดโปรแกรม)...\n")
+        print(f"\n🟢 ระบบเริ่มเฝ้าระวังอัตโนมัติ (ส่งการแจ้งเตือนไปยัง Chat ID 7760403769)...\n")
 
         loop_count = 1
         while True:
@@ -182,7 +181,6 @@ def start_auto_monitoring():
                     if (content.length > 15 && !seen.has(content)) {
                         seen.add(content);
 
-                        // Extract REAL Post Time Text
                         let realPostTime = '';
                         const timeEl = card.querySelector('time') || card.querySelector('abbr') || card.querySelector('a[href*="/posts/"] span, a[href*="pfbid"] span');
                         if (timeEl) {
@@ -193,7 +191,6 @@ def start_auto_monitoring():
                             if (timestampAnchor) realPostTime = timestampAnchor.textContent.trim();
                         }
 
-                        // Extract REAL Author Name & Profile Link
                         let authorName = 'สมาชิกกลุ่มตั้งตี้หารค่าสมองกล';
                         let authorUrl = '';
                         const authorAnchors = Array.from(card.querySelectorAll('h2 a, h3 a, h4 a, strong a, a[href*="profile.php"], a[href*="/user/"], a[href*="/people/"]'));
@@ -210,7 +207,6 @@ def start_auto_monitoring():
                             }
                         }
 
-                        // Extract REAL Post Permalink
                         let postUrl = '';
                         const linkAnchors = Array.from(card.querySelectorAll('a[href*="/posts/"], a[href*="/permalink/"], a[href*="pfbid"], a[href*="multi_permalinks="]'));
                         for (const a of linkAnchors) {
@@ -245,7 +241,7 @@ def start_auto_monitoring():
             for post in matched_posts:
                 post_id = post.get("id")
                 if post_id not in notified_posts:
-                    print(f"🔔 พบโพสต์ใหม่จาก '{post.get('authorName')}'!")
+                    print(f"🔔 พบโพสต์ใหม่จาก '{post.get('authorName')}'! กำลังส่งแจ้งเตือน Telegram ไปยัง Chat ID 7760403769...")
                     sent = send_telegram_alert(config.get("bot_token"), config.get("chat_id"), post)
                     if sent:
                         notified_posts.add(post_id)
