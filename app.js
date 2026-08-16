@@ -1,5 +1,6 @@
 /**
  * Facebook Private Group Word Search - Core Application Engine
+ * Configured specifically for Group: 993813573590579 & Keyword: "รับคน"
  */
 
 (function () {
@@ -10,7 +11,7 @@
     posts: [],
     filteredPosts: [],
     authors: new Set(),
-    searchQuery: '',
+    searchQuery: 'รับคน', // Default target keyword
     searchMode: 'exact', // 'exact', 'words', 'regex'
     caseSensitive: false,
     wholeWord: false,
@@ -64,9 +65,15 @@
   // Initialize Application
   function init() {
     bindEvents();
+
+    if (DOM.searchInput) {
+      DOM.searchInput.value = state.searchQuery;
+      if (DOM.searchClearBtn) DOM.searchClearBtn.style.display = 'block';
+    }
+
     // Load sample data if available
     if (window.SAMPLE_FB_GROUP_DATA && window.SAMPLE_FB_GROUP_DATA.posts) {
-      loadDataset(window.SAMPLE_FB_GROUP_DATA.posts, "Sample Private Group Dataset");
+      loadDataset(window.SAMPLE_FB_GROUP_DATA.posts, "Group 993813573590579 Dataset");
     }
   }
 
@@ -195,9 +202,9 @@
     if (DOM.loadSampleDataBtn) {
       DOM.loadSampleDataBtn.addEventListener('click', () => {
         if (window.SAMPLE_FB_GROUP_DATA) {
-          loadDataset(window.SAMPLE_FB_GROUP_DATA.posts, "Sample Private Group Dataset");
+          loadDataset(window.SAMPLE_FB_GROUP_DATA.posts, "Group 993813573590579 Dataset");
           closeModal(DOM.importModal);
-          showToast("Sample Facebook group data loaded!", "success");
+          showToast("โหลดข้อมูลกลุ่ม 993813573590579 เรียบร้อยแล้ว!", "success");
         }
       });
     }
@@ -212,10 +219,10 @@
   function loadDataset(postsArray, sourceName = "Imported File") {
     state.posts = postsArray.map((p, index) => ({
       id: p.id || `post_${Date.now()}_${index}`,
-      authorName: p.authorName || p.author || 'Group Member',
+      authorName: p.authorName || p.author || 'สมาชิกกลุ่ม 993813573590579',
       authorAvatar: p.authorAvatar || getAvatarPlaceholder(p.authorName || 'User'),
       postDate: p.postDate || p.date || new Date().toISOString(),
-      postUrl: p.postUrl || '#',
+      postUrl: p.postUrl || 'https://www.facebook.com/groups/993813573590579',
       content: p.content || p.text || p.message || '',
       reactionsCount: p.reactionsCount || p.likes || 0,
       commentsCount: (p.comments ? p.comments.length : (p.commentsCount || 0)),
@@ -231,17 +238,16 @@
 
     populateAuthorDropdown();
     applyFiltersAndRender();
-    showToast(`Successfully loaded ${state.posts.length} posts from ${sourceName}.`, 'success');
+    showToast(`โหลด ${state.posts.length} โพสต์จาก ${sourceName} สำเร็จ`, 'success');
   }
 
   function getAvatarPlaceholder(name) {
-    const initials = name.split(' ').map(n => n[0]).join('').substring(0, 2).toUpperCase();
     return `https://ui-avatars.com/api/?name=${encodeURIComponent(name)}&background=1877F2&color=fff&bold=true`;
   }
 
   function populateAuthorDropdown() {
     if (!DOM.authorFilterSelect) return;
-    DOM.authorFilterSelect.innerHTML = '<option value="all">All Authors</option>';
+    DOM.authorFilterSelect.innerHTML = '<option value="all">ผู้โพสต์ทั้งหมด (All)</option>';
     Array.from(state.authors).sort().forEach(author => {
       const opt = document.createElement('option');
       opt.value = author;
@@ -263,7 +269,7 @@
       } else if (fileName.endsWith('.txt')) {
         parseTxtFile(file);
       } else {
-        showToast(`Unsupported file type: ${file.name}`, 'warning');
+        showToast(`ไม่รองรับไฟล์ประเภท: ${file.name}`, 'warning');
       }
     });
     closeModal(DOM.importModal);
@@ -282,17 +288,17 @@
         const postContainers = doc.querySelectorAll('[role="feed"] > div, [data-pagelet^="FeedUnit"], .userContentWrapper, div[dir="auto"]');
 
         if (postContainers.length === 0) {
-          // Fallback: search for all paragraphs / text blocks with length > 20
           const textBlocks = doc.querySelectorAll('div[dir="auto"], span[dir="auto"]');
           let idCounter = 1;
           textBlocks.forEach(el => {
             const txt = el.textContent.trim();
-            if (txt.length > 35 && !txt.includes('Comment') && !txt.includes('Like')) {
+            if (txt.length > 25 && !txt.includes('Comment') && !txt.includes('Like')) {
               extractedPosts.push({
                 id: `html_p_${idCounter++}`,
-                authorName: 'Saved Group Member',
+                authorName: 'สมาชิกกลุ่ม 993813573590579',
                 content: txt,
                 postDate: new Date().toISOString(),
+                postUrl: 'https://www.facebook.com/groups/993813573590579',
                 comments: []
               });
             }
@@ -303,7 +309,7 @@
             const textEl = container.querySelector('[dir="auto"]') || container;
             const content = textEl ? textEl.textContent.trim() : '';
             const authorEl = container.querySelector('h2, h3, strong, a[href*="/user/"], a[href*="/groups/"]');
-            const authorName = authorEl ? authorEl.textContent.trim() : 'Group Member';
+            const authorName = authorEl ? authorEl.textContent.trim() : 'สมาชิกกลุ่ม 993813573590579';
 
             if (content.length > 15) {
               extractedPosts.push({
@@ -311,6 +317,7 @@
                 authorName: authorName,
                 content: content,
                 postDate: new Date().toISOString(),
+                postUrl: 'https://www.facebook.com/groups/993813573590579',
                 comments: []
               });
             }
@@ -320,10 +327,10 @@
         if (extractedPosts.length > 0) {
           loadDataset(extractedPosts, file.name);
         } else {
-          showToast(`No posts could be extracted from ${file.name}. Try saving the full page DOM.`, 'warning');
+          showToast(`ไม่พบข้อมูลโพสต์ในไฟล์ ${file.name}`, 'warning');
         }
       } catch (err) {
-        showToast(`Failed to parse HTML file: ${err.message}`, 'danger');
+        showToast(`อ่านไฟล์ HTML ไม่สำเร็จ: ${err.message}`, 'danger');
       }
     };
     reader.readAsText(file);
@@ -341,31 +348,30 @@
         const jsonRows = XLSX.utils.sheet_to_json(worksheet);
 
         if (!jsonRows.length) {
-          showToast("Excel sheet is empty!", "warning");
+          showToast("ตาราง Excel ว่างเปล่า!", "warning");
           return;
         }
 
         const extractedPosts = jsonRows.map((row, idx) => {
-          // Normalize column names
           const keys = Object.keys(row);
-          const contentKey = keys.find(k => /content|post|message|text|body/i.test(k)) || keys[0];
-          const authorKey = keys.find(k => /author|user|name|poster|sender/i.test(k));
-          const dateKey = keys.find(k => /date|time|created/i.test(k));
-          const urlKey = keys.find(k => /url|link/i.test(k));
+          const contentKey = keys.find(k => /content|post|message|text|body|ข้อความ|รายละเอียด/i.test(k)) || keys[0];
+          const authorKey = keys.find(k => /author|user|name|poster|sender|ผู้โพสต์|ชื่อ/i.test(k));
+          const dateKey = keys.find(k => /date|time|created|วันที่/i.test(k));
+          const urlKey = keys.find(k => /url|link|ลิงก์/i.test(k));
 
           return {
             id: `excel_${idx}`,
-            authorName: authorKey ? String(row[authorKey]) : 'Group Member',
+            authorName: authorKey ? String(row[authorKey]) : 'สมาชิกกลุ่ม 993813573590579',
             content: contentKey ? String(row[contentKey]) : '',
             postDate: dateKey ? String(row[dateKey]) : new Date().toISOString(),
-            postUrl: urlKey ? String(row[urlKey]) : '#',
+            postUrl: urlKey ? String(row[urlKey]) : 'https://www.facebook.com/groups/993813573590579',
             comments: []
           };
         }).filter(p => p.content.trim().length > 0);
 
         loadDataset(extractedPosts, file.name);
       } catch (err) {
-        showToast(`Error reading Excel/CSV: ${err.message}`, 'danger');
+        showToast(`อ่านไฟล์ Excel/CSV ล้มเหลว: ${err.message}`, 'danger');
       }
     };
     reader.readAsArrayBuffer(file);
@@ -380,18 +386,17 @@
         const postsArray = Array.isArray(json) ? json : (json.posts || [json]);
         loadDataset(postsArray, file.name);
       } catch (err) {
-        showToast(`Invalid JSON file format: ${err.message}`, 'danger');
+        showToast(`รูปแบบไฟล์ JSON ไม่ถูกต้อง: ${err.message}`, 'danger');
       }
     };
     reader.readAsText(file);
   }
 
-  // Parser: Plain Text (Double newline separator)
+  // Parser: Plain Text
   function parseTxtFile(file) {
     const reader = new FileReader();
     reader.onload = (e) => {
-      const text = e.target.result;
-      parseRawTextString(text, file.name);
+      parseRawTextString(e.target.result, file.name);
     };
     reader.readAsText(file);
   }
@@ -399,10 +404,10 @@
   function parseRawTextImport() {
     const text = DOM.rawTextInput ? DOM.rawTextInput.value.trim() : '';
     if (!text) {
-      showToast("Please enter or paste text to import.", "warning");
+      showToast("กรุณากรอกหรือวางข้อความโพสต์ก่อนนำเข้า", "warning");
       return;
     }
-    parseRawTextString(text, "Pasted Raw Text");
+    parseRawTextString(text, "ข้อความที่วาง");
     DOM.rawTextInput.value = '';
     closeModal(DOM.importModal);
   }
@@ -411,9 +416,10 @@
     const paragraphs = text.split(/\n\s*\n/).filter(p => p.trim().length > 5);
     const posts = paragraphs.map((p, idx) => ({
       id: `raw_${idx}`,
-      authorName: 'Pasted Post',
+      authorName: 'ข้อความที่คัดลอกมา',
       content: p.trim(),
       postDate: new Date().toISOString(),
+      postUrl: 'https://www.facebook.com/groups/993813573590579',
       comments: []
     }));
     loadDataset(posts, sourceName);
@@ -434,7 +440,7 @@
       results = results.filter(p => new Date(p.postDate).getTime() >= startMs);
     }
     if (state.endDate) {
-      const endMs = new Date(state.endDate).getTime() + (24 * 60 * 60 * 1000); // end of day
+      const endMs = new Date(state.endDate).getTime() + (24 * 60 * 60 * 1000);
       results = results.filter(p => new Date(p.postDate).getTime() <= endMs);
     }
 
@@ -500,7 +506,6 @@
       let escaped = escapeRegExp(query);
 
       if (state.searchMode === 'words') {
-        // Split by spaces to match any of the words
         const words = query.split(/\s+/).map(w => escapeRegExp(w)).filter(Boolean);
         if (words.length > 0) {
           const pattern = words.map(w => state.wholeWord ? `\\b${w}\\b` : w).join('|');
@@ -531,9 +536,9 @@
       DOM.postsFeed.innerHTML = `
         <div class="empty-state">
           <div class="empty-icon">🔍</div>
-          <h3 class="empty-title">No Matching Posts Found</h3>
-          <p class="empty-desc">Try adjusting your search keywords, switching search mode, or resetting active filters.</p>
-          <button class="btn btn-secondary" onclick="document.getElementById('reset-filters-btn').click()">Reset All Filters</button>
+          <h3 class="empty-title">ไม่พบโพสต์ที่ตรงกับคำค้นหา "${escapeHtml(state.searchQuery)}"</h3>
+          <p class="empty-desc">ลองเปลี่ยนคำค้นหา หรือกดล้างตัวกรองทั้งหมดเพื่อแสดงโพสต์ทั้งหมดในกลุ่ม 993813573590579</p>
+          <button class="btn btn-secondary" onclick="document.getElementById('reset-filters-btn').click()">ล้างตัวกรองทั้งหมด</button>
         </div>
       `;
       return;
@@ -561,13 +566,13 @@
 
         commentsHtml = `
           <div class="comments-section">
-            <div class="comments-header">💬 ${post.comments.length} Comments</div>
+            <div class="comments-header">💬 ${post.comments.length} ความคิดเห็น</div>
             ${commentItems}
           </div>
         `;
       }
 
-      const formattedDate = new Date(post.postDate).toLocaleString(undefined, {
+      const formattedDate = new Date(post.postDate).toLocaleString('th-TH', {
         dateStyle: 'medium',
         timeStyle: 'short'
       });
@@ -579,10 +584,12 @@
               <img class="author-avatar" src="${escapeHtml(post.authorAvatar)}" alt="${escapeHtml(post.authorName)}" onerror="this.src='https://ui-avatars.com/api/?name=${encodeURIComponent(post.authorName)}&background=1877F2&color=fff'">
               <div>
                 <div class="author-name">${escapeHtml(post.authorName)}</div>
-                <div class="post-timestamp">📅 ${formattedDate}</div>
+                <div class="post-timestamp">📅 ${formattedDate} • Group 993813573590579</div>
               </div>
             </div>
-            ${post.hasLinks ? '<span class="post-badge">🔗 Contains Link</span>' : ''}
+            <a href="${escapeHtml(post.postUrl)}" target="_blank" class="post-badge" style="text-decoration: none;">
+              🔗 เปิดใน Facebook ↗
+            </a>
           </header>
 
           <div class="post-body">${highlightedContent}</div>
@@ -601,7 +608,6 @@
     const safeText = escapeHtml(text);
     if (!regex) return safeText;
 
-    // Reset lastIndex for global regex
     regex.lastIndex = 0;
     return safeText.replace(regex, (match) => `<mark class="search-highlight">${match}</mark>`);
   }
@@ -631,22 +637,22 @@
     const pills = [];
 
     if (state.searchQuery) {
-      pills.push({ label: `Query: "${state.searchQuery}"`, type: 'query' });
+      pills.push({ label: `คำค้น: "${state.searchQuery}"`, type: 'query' });
     }
     if (state.selectedAuthor !== 'all') {
-      pills.push({ label: `Author: ${state.selectedAuthor}`, type: 'author' });
+      pills.push({ label: `ผู้โพสต์: ${state.selectedAuthor}`, type: 'author' });
     }
     if (state.startDate) {
-      pills.push({ label: `From: ${state.startDate}`, type: 'startDate' });
+      pills.push({ label: `ตั้งแต่: ${state.startDate}`, type: 'startDate' });
     }
     if (state.endDate) {
-      pills.push({ label: `To: ${state.endDate}`, type: 'endDate' });
+      pills.push({ label: `ถึง: ${state.endDate}`, type: 'endDate' });
     }
     if (state.commentsOnly) {
-      pills.push({ label: `Comments Only`, type: 'commentsOnly' });
+      pills.push({ label: `มีคอมเมนต์เท่านั้น`, type: 'commentsOnly' });
     }
     if (state.linksOnly) {
-      pills.push({ label: `Links Only`, type: 'linksOnly' });
+      pills.push({ label: `มีลิงก์เท่านั้น`, type: 'linksOnly' });
     }
 
     if (pills.length === 0) {
@@ -663,7 +669,6 @@
     `).join('');
   }
 
-  // Global window method to clear individual filter
   window.removeFilter = function (type) {
     if (type === 'query') {
       state.searchQuery = '';
@@ -689,15 +694,17 @@
   };
 
   function resetFilters() {
-    state.searchQuery = '';
+    state.searchQuery = 'รับคน';
     state.selectedAuthor = 'all';
     state.startDate = '';
     state.endDate = '';
     state.commentsOnly = false;
     state.linksOnly = false;
 
-    if (DOM.searchInput) DOM.searchInput.value = '';
-    if (DOM.searchClearBtn) DOM.searchClearBtn.style.display = 'none';
+    if (DOM.searchInput) {
+      DOM.searchInput.value = 'รับคน';
+      if (DOM.searchClearBtn) DOM.searchClearBtn.style.display = 'block';
+    }
     if (DOM.authorFilterSelect) DOM.authorFilterSelect.value = 'all';
     if (DOM.startDateInput) DOM.startDateInput.value = '';
     if (DOM.endDateInput) DOM.endDateInput.value = '';
@@ -705,32 +712,31 @@
     if (DOM.linksOnlyToggle) DOM.linksOnlyToggle.checked = false;
 
     applyFiltersAndRender();
-    showToast("All filters have been reset.", "success");
+    showToast("รีเซ็ตตัวกรองแล้ว ค้นหาคำว่า 'รับคน' ตามเดิม", "success");
   }
 
   // Export Results to Excel / CSV
   function exportSearchResults() {
     if (state.filteredPosts.length === 0) {
-      showToast("No search results to export!", "warning");
+      showToast("ไม่มีผลการค้นหาสำหรับส่งออก!", "warning");
       return;
     }
 
     const rows = state.filteredPosts.map(p => ({
-      "Author": p.authorName,
-      "Date": p.postDate,
-      "Content": p.content,
-      "Comments Count": p.commentsCount,
-      "URL": p.postUrl
+      "กลุ่ม (Group)": "https://www.facebook.com/groups/993813573590579",
+      "ผู้โพสต์ (Author)": p.authorName,
+      "วันที่ (Date)": p.postDate,
+      "ข้อความโพสต์ (Content)": p.content,
+      "จำนวนคอมเมนต์": p.commentsCount,
+      "ลิงก์โพสต์": p.postUrl
     }));
 
     const worksheet = XLSX.utils.json_to_sheet(rows);
     const workbook = XLSX.utils.book_new();
-    XLSX.utils.book_append_sheet(workbook, worksheet, "Search Results");
+    XLSX.utils.book_append_sheet(workbook, worksheet, "FB_Group_Search");
 
-    const queryTag = state.searchQuery ? `_${state.searchQuery.replace(/[^a-zA-Z0-9]/g, '_')}` : '';
-    XLSX.writeFile(workbook, `FB_Group_Search_Results${queryTag}.xlsx`);
-
-    showToast(`Exported ${rows.length} rows to Excel!`, "success");
+    XLSX.writeFile(workbook, `FB_Group_993813573590579_Search_รับคน.xlsx`);
+    showToast(`ส่งออก ${rows.length} แถวไปยังไฟล์ Excel สำเร็จ!`, "success");
   }
 
   // Modal Control Helpers

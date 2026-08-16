@@ -1,15 +1,15 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="th">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Facebook Private Group Word Search & Detector</title>
-  <meta name="description" content="Search for specific words, sentences, or regex patterns in Facebook Private Group posts and comments with visual keyword highlighting.">
+  <title>FB Group Word Detect - 993813573590579 ("รับคน")</title>
+  <meta name="description" content="ค้นหาคำว่า 'รับคน' หรือคำสำคัญเฉพาะในกลุ่ม Facebook Private Group (993813573590579) พร้อมไฮไลท์ข้อความทันที">
   
   <!-- Google Fonts -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@500;600;700;800&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@500;600;700;800&family=Sarabun:wght@300;400;500;600;700&display=swap" rel="stylesheet">
   
   <!-- SheetJS CDN for Excel/CSV Parsing & Exporting -->
   <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
@@ -27,27 +27,42 @@
         <div class="brand-icon">🔍</div>
         <div>
           <h1 class="brand-title">FB WordDetect</h1>
-          <span class="brand-badge">Private Group Pro</span>
+          <a href="https://www.facebook.com/groups/993813573590579" target="_blank" class="brand-badge" style="text-decoration: none; display: inline-block; margin-top: 2px;">
+            Target: 993813573590579 ↗
+          </a>
         </div>
       </div>
 
       <div class="sidebar-content">
         
+        <!-- Target Group Info Card -->
+        <div style="background: rgba(24, 119, 242, 0.1); border: 1px solid rgba(24, 119, 242, 0.3); border-radius: 12px; padding: 0.85rem 1rem; font-size: 0.85rem;">
+          <div style="font-weight: 700; color: #60a5fa; margin-bottom: 0.25rem;">📌 Target Private Group</div>
+          <div style="color: #cbd5e1; word-break: break-all; font-size: 0.78rem;">
+            <a href="https://www.facebook.com/groups/993813573590579" target="_blank" style="color: #93c5fd; text-decoration: underline;">
+              fb.com/groups/993813573590579
+            </a>
+          </div>
+          <div style="margin-top: 0.4rem; color: #facc15; font-weight: 600; font-size: 0.8rem;">
+            Target Keyword: "รับคน"
+          </div>
+        </div>
+
         <!-- Search Engine Options -->
         <div class="control-group">
-          <div class="sidebar-section-title">Search Configuration</div>
+          <div class="sidebar-section-title">ตั้งค่าการค้นหา (Search Config)</div>
           
-          <label class="control-label" for="search-mode-select">Match Strategy</label>
+          <label class="control-label" for="search-mode-select">รูปแบบการค้นหา</label>
           <select id="search-mode-select" class="select-field">
-            <option value="exact">Exact Phrase Match</option>
-            <option value="words">Any / All Keywords</option>
+            <option value="exact" selected>ค้นหาตรงคำแป๊ะ (Exact Phrase)</option>
+            <option value="words">ค้นหาคำใดคำหนึ่ง (Any Keyword)</option>
             <option value="regex">Regular Expression (Regex)</option>
           </select>
         </div>
 
         <div class="control-group">
           <label class="toggle-item">
-            <span>Case Sensitive</span>
+            <span>ตัวพิมพ์เล็ก-ใหญ่ (Case Sensitive)</span>
             <label class="switch">
               <input type="checkbox" id="case-sensitive-toggle">
               <span class="slider"></span>
@@ -55,7 +70,7 @@
           </label>
 
           <label class="toggle-item">
-            <span>Whole Word Only</span>
+            <span>ตรงทั้งคำ (Whole Word)</span>
             <label class="switch">
               <input type="checkbox" id="whole-word-toggle">
               <span class="slider"></span>
@@ -65,23 +80,23 @@
 
         <!-- Filter Controls -->
         <div class="control-group">
-          <div class="sidebar-section-title">Filters</div>
+          <div class="sidebar-section-title">ตัวกรอง (Filters)</div>
 
-          <label class="control-label" for="author-filter-select">Author</label>
+          <label class="control-label" for="author-filter-select">ผู้โพสต์ (Author)</label>
           <select id="author-filter-select" class="select-field">
-            <option value="all">All Authors</option>
+            <option value="all">ผู้โพสต์ทั้งหมด (All)</option>
           </select>
         </div>
 
         <div class="control-group">
-          <label class="control-label">Date Range</label>
-          <input type="date" id="start-date-input" class="input-field" placeholder="Start Date">
-          <input type="date" id="end-date-input" class="input-field" style="margin-top: 0.4rem;" placeholder="End Date">
+          <label class="control-label">ช่วงวันที่ (Date Range)</label>
+          <input type="date" id="start-date-input" class="input-field" placeholder="วันที่เริ่มต้น">
+          <input type="date" id="end-date-input" class="input-field" style="margin-top: 0.4rem;" placeholder="วันที่สิ้นสุด">
         </div>
 
         <div class="control-group">
           <label class="toggle-item">
-            <span>Posts with Comments</span>
+            <span>เฉพาะโพสต์ที่มีคอมเมนต์</span>
             <label class="switch">
               <input type="checkbox" id="comments-only-toggle">
               <span class="slider"></span>
@@ -89,7 +104,7 @@
           </label>
 
           <label class="toggle-item">
-            <span>Contains Links</span>
+            <span>เฉพาะโพสต์ที่มีลิงก์</span>
             <label class="switch">
               <input type="checkbox" id="links-only-toggle">
               <span class="slider"></span>
@@ -98,13 +113,13 @@
         </div>
 
         <button id="reset-filters-btn" class="btn btn-secondary" style="width: 100%; margin-top: 0.5rem;">
-          🔄 Reset All Filters
+          🔄 ล้างตัวกรองทั้งหมด
         </button>
 
         <!-- Quick Guide Banner -->
-        <div style="background: rgba(24, 119, 242, 0.08); border: 1px dashed rgba(24, 119, 242, 0.3); border-radius: 12px; padding: 1rem; font-size: 0.82rem; color: #94a3b8;">
-          <strong style="color: #60a5fa;">💡 Private Group Tip:</strong><br>
-          Open your FB group in Chrome, press <kbd style="background: #1e293b; padding: 2px 5px; border-radius: 4px;">Ctrl+S</kbd> to save as HTML, then drag & drop it here!
+        <div style="background: rgba(16, 185, 129, 0.08); border: 1px dashed rgba(16, 185, 129, 0.3); border-radius: 12px; padding: 1rem; font-size: 0.82rem; color: #94a3b8;">
+          <strong style="color: #34d399;">💡 วิธีนำเข้าข้อมูลกลุ่ม 993813573590579:</strong><br>
+          เปิดกลุ่มใน Chrome กด <kbd style="background: #1e293b; padding: 2px 5px; border-radius: 4px;">Ctrl+S</kbd> บันทึกไฟล์ HTML แล้วลากมาวางในปุ่ม Import Data ได้ทันที!
         </div>
 
       </div>
@@ -122,19 +137,20 @@
               type="text" 
               id="main-search-input" 
               class="main-search-input" 
-              placeholder="Search word, phrase, or sentence in FB private group..." 
+              value="รับคน"
+              placeholder="ค้นหาคำว่า 'รับคน' หรือประโยคในกลุ่ม 993813573590579..." 
               autocomplete="off"
             >
-            <button id="search-clear-btn" class="search-clear-btn" title="Clear search">&times;</button>
+            <button id="search-clear-btn" class="search-clear-btn" title="Clear search" style="display: block;">&times;</button>
           </div>
         </div>
 
         <div class="header-actions">
           <button id="import-modal-open-btn" class="btn btn-primary">
-            📥 Import Data
+            📥 นำเข้าข้อมูล (Import)
           </button>
           <button id="export-results-btn" class="btn btn-secondary">
-            📊 Export (.xlsx)
+            📊 ส่งออก Excel (.xlsx)
           </button>
         </div>
       </header>
@@ -147,7 +163,7 @@
             <div class="stat-icon blue">📁</div>
             <div class="stat-info">
               <div class="stat-value" id="stat-total-posts">0</div>
-              <div class="stat-label">Total Group Posts</div>
+              <div class="stat-label">โพสต์ทั้งหมดในกลุ่ม</div>
             </div>
           </div>
 
@@ -155,7 +171,7 @@
             <div class="stat-icon green">🎯</div>
             <div class="stat-info">
               <div class="stat-value" id="stat-matched-posts">0</div>
-              <div class="stat-label">Matched Search Results</div>
+              <div class="stat-label">โพสต์ที่พบคำว่า "รับคน"</div>
             </div>
           </div>
 
@@ -163,7 +179,7 @@
             <div class="stat-icon purple">👥</div>
             <div class="stat-info">
               <div class="stat-value" id="stat-unique-authors">0</div>
-              <div class="stat-label">Unique Authors</div>
+              <div class="stat-label">ผู้โพสต์ทั้งหมด</div>
             </div>
           </div>
 
@@ -171,14 +187,14 @@
             <div class="stat-icon amber">💬</div>
             <div class="stat-info">
               <div class="stat-value" id="stat-matched-comments">0</div>
-              <div class="stat-label">Matching Comments</div>
+              <div class="stat-label">ความคิดเห็นที่พบคีย์เวิร์ด</div>
             </div>
           </div>
         </section>
 
         <!-- Active Filter Summary Pills -->
         <div id="active-filters-bar" class="active-filters-bar" style="display: none;">
-          <span style="font-weight: 600; color: #94a3b8; margin-right: 0.5rem;">Active Filters:</span>
+          <span style="font-weight: 600; color: #94a3b8; margin-right: 0.5rem;">ตัวกรองที่ใช้งาน:</span>
           <div id="filter-pills-container" style="display: flex; gap: 0.5rem; flex-wrap: wrap;"></div>
         </div>
 
@@ -186,7 +202,7 @@
         <section class="feed-section">
           <div class="feed-header" style="margin-bottom: 1rem;">
             <h2 class="feed-title">
-              <span>Group Posts Feed</span>
+              <span>รายการโพสต์ในกลุ่ม 993813573590579</span>
             </h2>
           </div>
 
@@ -204,43 +220,43 @@
   <div id="import-modal" class="modal-overlay">
     <div class="modal-card">
       <div class="modal-header">
-        <h3 class="modal-title">Import Facebook Group Data</h3>
+        <h3 class="modal-title">นำเข้าข้อมูลกลุ่ม Facebook (993813573590579)</h3>
         <button id="import-modal-close-btn" class="modal-close">&times;</button>
       </div>
       <div class="modal-body">
         
         <p style="font-size: 0.9rem; color: #94a3b8; margin-bottom: 1.25rem;">
-          Upload your saved Facebook Group HTML files, Excel sheets, CSV, or paste raw text below.
+          อัปโหลดไฟล์ HTML ที่บันทึกจากหน้ากลุ่ม Facebook, ไฟล์ Excel (.xlsx, .csv), หรือวางข้อความโพสต์ด้านล่าง
         </p>
 
         <!-- Dropzone -->
         <div id="file-dropzone" class="dropzone-box">
           <div class="dropzone-icon">📄</div>
-          <h4 style="font-family: var(--font-heading); margin-bottom: 0.25rem;">Drop files here or click to browse</h4>
-          <p style="font-size: 0.8rem; color: #64748b;">Supports .html, .htm, .xlsx, .csv, .json, .txt</p>
+          <h4 style="font-family: var(--font-heading); margin-bottom: 0.25rem;">ลากไฟล์มาวางที่นี่ หรือคลิกเพื่อเลือกไฟล์</h4>
+          <p style="font-size: 0.8rem; color: #64748b;">รองรับไฟล์ .html, .htm, .xlsx, .csv, .json, .txt</p>
           <input type="file" id="file-input" style="display: none;" multiple accept=".html,.htm,.xlsx,.csv,.json,.txt">
         </div>
 
         <div style="display: flex; align-items: center; margin: 1.5rem 0; gap: 1rem; color: #64748b; font-size: 0.85rem;">
           <hr style="flex: 1; border: 0; border-top: 1px solid var(--border-glass);">
-          <span>OR PASTE RAW TEXT</span>
+          <span>หรือ วางข้อความโพสต์ (Paste Text)</span>
           <hr style="flex: 1; border: 0; border-top: 1px solid var(--border-glass);">
         </div>
 
         <!-- Raw Text Paste Area -->
         <div class="control-group">
-          <textarea id="raw-text-input" class="input-field" rows="4" placeholder="Paste raw copied Facebook posts here... (Separate posts with blank lines)"></textarea>
-          <button id="submit-raw-text-btn" class="btn btn-secondary" style="margin-top: 0.5rem;">Import Pasted Text</button>
+          <textarea id="raw-text-input" class="input-field" rows="4" placeholder="วางข้อความโพสต์จากกลุ่ม Facebook ที่คัดลอกมาที่นี่... (เว้นบรรทัดเพื่อแยกโพสต์)"></textarea>
+          <button id="submit-raw-text-btn" class="btn btn-secondary" style="margin-top: 0.5rem;">นำเข้าข้อความที่วาง</button>
         </div>
 
         <div style="display: flex; align-items: center; margin: 1.5rem 0; gap: 1rem; color: #64748b; font-size: 0.85rem;">
           <hr style="flex: 1; border: 0; border-top: 1px solid var(--border-glass);">
-          <span>DEMO DATASET</span>
+          <span>ชุดข้อมูลตัวอย่าง (Group 993813573590579)</span>
           <hr style="flex: 1; border: 0; border-top: 1px solid var(--border-glass);">
         </div>
 
         <button id="load-sample-data-btn" class="btn btn-primary" style="width: 100%;">
-          🚀 Reset & Load Sample Facebook Private Group Dataset
+          🚀 โหลดชุดข้อมูลตัวอย่างโพสต์ "รับคน" (กลุ่ม 993813573590579)
         </button>
 
       </div>
